@@ -14,10 +14,11 @@ class GeometryObjectFindPredicate
 {
 public:
 	GeometryObjectFindPredicate( IGeometryObject * origin );
+	GeometryObjectFindPredicate( int Id );
 	~GeometryObjectFindPredicate();
 	bool operator()( IGeometryObject * object );
 private:
-	IGeometryObject * m_Origin;
+	int m_Id;
 };
 
 #endif /* GEOMETRYOBJECTFINDPREDICATE_H_ */

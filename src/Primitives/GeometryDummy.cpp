@@ -52,6 +52,11 @@ string GeometryDummy::toString()
 	return stream.str();
 }
 
+void GeometryDummy::fromString( string str )
+{
+
+}
+
 IGeometryObject & GeometryDummy::operator = ( IGeometryObject & src )
 {
 	return *this;

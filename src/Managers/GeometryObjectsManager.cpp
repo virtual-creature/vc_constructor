@@ -14,6 +14,7 @@
 #include <iostream>
 #include <algorithm>
 #include <fstream>
+#include <cassert>
 
 #define UN_TRACKING_POINT_RADIUS 40
 
@@ -104,6 +105,17 @@ void GeometryObjectsManager::removeDummyObjects()
 void GeometryObjectsManager::getObjects( vector<IGeometryObject *> & objects )
 {
 	objects = m_geometryObjects;
+}
+
+const IGeometryObject * GeometryObjectsManager::getObject( int Id )
+{
+	GeometryObjectFindPredicate findPredicate( Id );
+	vector<IGeometryObject *>::iterator found_iter = std::find_if( m_geometryObjects.begin(), m_geometryObjects.end(), findPredicate );
+	if( found_iter == m_geometryObjects.end() )
+	{
+		assert( false );
+	}
+	return (*found_iter);
 }
 
 bool GeometryObjectsManager::getPoint( int x, int y, GeometryPoint *& point )
@@ -294,8 +306,6 @@ bool GeometryObjectsManager::getLinkUnderPoint( int x, int y, GeometryLink ** re
 				continue;
 			}
 
-//			int square_full = ( pointFrom->getX() - pointTo->getX() ) * ( pointFrom->getY() - pointTo->getY() );
-
 			int square_1 = ( pointFrom->getX() - pointTo->getX() ) * ( y - pointTo->getY() );
 			int square_2 = ( pointFrom->getY() - pointTo->getY() ) * ( x - pointTo->getX() );
 
@@ -328,7 +338,37 @@ void GeometryObjectsManager::save( string filename )
 	vector<IGeometryObject *>::iterator iter = begin;
 	for(  ; iter != end ; iter ++ )
 	{
-		file << (*iter)->toString() << endl;
+		file << (*iter)->toString();
+		if( ( iter + 1 ) != end )
+		{
+			file << endl;
+		}
+	}
+}
+
+void GeometryObjectsManager::open( string filename )
+{
+	ifstream file( filename.c_str() );
+	if( false == file.is_open() )
+	{
+		return;
+	}
+
+	char str[BUFSIZ] = { 0 };
+
+	while(!file.eof())
+	{
+		memset( str, 0, sizeof( str ) );
+		file.getline( str, BUFSIZ, '\n' );
+
+		GeometryObjectsTypes type;
+		sscanf( str, "%d ", (int*)&type );
+
+		IGeometryObject * geometryObject = GeometryObjectFactory::getInstance().createGeometryObject( type );
+		string command = str;
+		geometryObject->fromString( command );
+
+		addObject( geometryObject );
 	}
 }
 

@@ -7,9 +7,11 @@
 
 #include "GeometryLink.h"
 #include "GeometryLinkGetAbsoluteAnglePredicate.h"
-#include <stdlib.h>
+#include "GeometryObjectsManager.h"
+#include <cstdlib>
 #include <sstream>
 #include <cmath>
+#include <cassert>
 using namespace std;
 
 GeometryLink::GeometryLink() : m_Id( rand() )
@@ -50,10 +52,9 @@ IGeometryObject * GeometryLink::clone()
 {
 	GeometryLink * newLink = new GeometryLink;
 
-	newLink->setPointFrom( this->getPointFrom() );
-	newLink->setPointTo( this->getPointTo() );
-
-	newLink->m_Id = m_Id;
+	newLink->setId( getId() );
+	newLink->setPointFrom( getPointFrom() );
+	newLink->setPointTo( getPointTo() );
 
 	return newLink;
 }
@@ -65,6 +66,24 @@ string GeometryLink::toString()
 	stream << getType() << " " << getId() << " " << getPointFrom()->getId() << " " << getPointTo()->getId() << flush;
 
 	return stream.str();
+}
+
+void GeometryLink::fromString( string str )
+{
+	GeometryObjectsTypes geometryObjectType = GEOMETRYOBJECT_DUMMY;
+	int Id = 0;
+	int pointFromId = 0;
+	int pointToId = 0;
+	sscanf( str.c_str(), "%d %d %d %d", (int*)&geometryObjectType, &Id, &pointFromId, &pointToId );
+	if( geometryObjectType != GEOMETRYOBJECT_LINK )
+	{
+		assert( false );
+	}
+	setId( Id );
+	const GeometryPoint *pointFrom = dynamic_cast<const GeometryPoint *>( GeometryObjectsManager::getInstance().getObject( pointFromId ) );
+	const GeometryPoint *pointTo = dynamic_cast<const GeometryPoint *>( GeometryObjectsManager::getInstance().getObject( pointToId ) );
+	setPointFrom( pointFrom );
+	setPointTo( pointTo );
 }
 
 GeometryLink & GeometryLink::operator = ( const GeometryLink & src )

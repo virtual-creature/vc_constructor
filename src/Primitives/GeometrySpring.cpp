@@ -11,11 +11,13 @@
 #include "GeometryLinkGetAbsoluteAnglePredicate.h"
 #include "IsAngleInShortPathBetweenTwo.h"
 #include "GeometrySpringGetAngles.h"
-#include <stdlib.h>
+#include "GeometryObjectsManager.h"
+#include <cstdlib>
 #include <cstring>
 #include <cmath>
 #include <sstream>
 #include <iostream>
+#include <cassert>
 using namespace std;
 
 GeometrySpring::GeometrySpring() : m_Id( rand() ), m_IsClosedPath( true ), m_State( GEOMETRYOBJECTCONSTRUCTING_NONE )
@@ -151,9 +153,28 @@ string GeometrySpring::toString()
 {
 	stringstream stream;
 
-	stream << getType() << " " << getId() << " " << getLinkFrom()->getId() << " " << getLinkTo()->getId() << flush;
+	stream << getType() << " " << getId() << " " << getLinkFrom()->getId() << " " << getLinkTo()->getId() << " " << getIsClosedPath() << flush;
 
 	return stream.str();
+}
+
+void GeometrySpring::fromString( string str )
+{
+	GeometryObjectsTypes geometryObjectType = GEOMETRYOBJECT_DUMMY;
+	int Id = 0;
+	int linkFromId = 0;
+	int linkToId = 0;
+	int isClosestPathInt = 0;
+	sscanf( str.c_str(), "%d %d %d %d %d", (int*)&geometryObjectType, &Id, &linkFromId, &linkToId, &isClosestPathInt );
+	if( geometryObjectType != GEOMETRYOBJECT_SPRING )
+	{
+		assert( false );
+	}
+	const GeometryLink *linkFrom = dynamic_cast<const GeometryLink *>( GeometryObjectsManager::getInstance().getObject( linkFromId ) );
+	const GeometryLink *linkTo = dynamic_cast<const GeometryLink *>( GeometryObjectsManager::getInstance().getObject( linkToId ) );
+	setLinkFrom( linkFrom );
+	setLinkTo( linkTo );
+	setIsClosedPath( isClosestPathInt == 1 );
 }
 
 IGeometryObject & GeometrySpring::operator = ( IGeometryObject & src )

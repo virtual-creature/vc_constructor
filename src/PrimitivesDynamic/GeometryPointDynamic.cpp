@@ -54,7 +54,7 @@ void GeometryPointDynamic::initPoint()
 	// The moment of inertia is like mass for rotation
 	// Use the cpMomentFor*() functions to help you approximate it.
 	cpFloat moment = cpMomentForCircle( m_Mass, 0, m_Radius, cpvzero );
-	cpFloat emptyBodyMoment = cpMomentForCircle( m_Mass, 0, 0.1, cpvzero );
+//	cpFloat emptyBodyMoment = cpMomentForCircle( m_Mass, 0, 0.1, cpvzero );
 
 	// The cpSpaceAdd*() functions return the thing that you are adding.
 	// It's convenient to create and add an object in one line.

@@ -6,8 +6,9 @@
  */
 
 #include "GeometryPoint.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include <sstream>
+#include <cassert>
 using namespace std;
 
 GeometryPoint::GeometryPoint() : m_x( 0 ), m_y( 0 ), m_Id( rand() )
@@ -86,6 +87,22 @@ string GeometryPoint::toString()
 	stream << getType() << " " << getId() << " " << getX() << " " << getY() << flush;
 
 	return stream.str();
+}
+
+void GeometryPoint::fromString( string str )
+{
+	GeometryObjectsTypes geometryObjectType = GEOMETRYOBJECT_DUMMY;
+	int Id = 0;
+	int x = 0;
+	int y = 0;
+	sscanf( str.c_str(), "%d %d %d %d", (int*)&geometryObjectType, &Id, &x, &y );
+	if( geometryObjectType != GEOMETRYOBJECT_POINT )
+	{
+		assert( false );
+	}
+	setId( Id );
+	setX( x );
+	setY( y );
 }
 
 IGeometryObject & GeometryPoint::operator = ( IGeometryObject & src )

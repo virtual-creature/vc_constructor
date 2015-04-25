@@ -1,5 +1,5 @@
 /*
- * GeometryObjectFindPredicate.cpp
+ * GraphicObjectFindPredicate.cpp
  *
  *  Created on: Mar 25, 2015
  *      Author: vostanin

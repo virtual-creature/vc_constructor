@@ -23,6 +23,7 @@ public:
 	void setId( int id);
 	IGeometryObject * clone();
 	string toString();
+	void fromString( string str );
 	bool isValid();
 	IGeometryObject & operator = ( IGeometryObject & src );
 

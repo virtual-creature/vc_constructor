@@ -1,12 +1,12 @@
 /*
- * GeometryObjectFindPredicate.h
+ * GraphicObjectFindPredicate.h
  *
  *  Created on: Mar 25, 2015
  *      Author: vostanin
  */
 
-#ifndef GEOMETRYOBJECTFINDPREDICATE_H_
-#define GEOMETRYOBJECTFINDPREDICATE_H_
+#ifndef GRAPHICOBJECTFINDPREDICATE_H_
+#define GRAPHICOBJECTFINDPREDICATE_H_
 
 #include "IGraphicObject.h"
 
@@ -20,4 +20,4 @@ private:
 	IGraphicObject * m_Origin;
 };
 
-#endif /* GEOMETRYOBJECTFINDPREDICATE_H_ */
+#endif /* GRAPHICOBJECTFINDPREDICATE_H_ */

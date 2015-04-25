@@ -38,9 +38,6 @@ GraphicSpring::~GraphicSpring()
 
 void GraphicSpring::draw()
 {
-//	cout << "draw spring id=" << m_geometrySpring.getId() << endl << flush;
-
-//	initLineVertexes();
 	initCircleVertexes();
 
 	draw_line_2d();
@@ -176,8 +173,6 @@ void GraphicSpring::initPartialCircleVertex()
 
 //	cout << "minAngle=" << minAngle << "; maxAngle=" << maxAngle << endl << flush;
 	float radian = ( (float)minAngle / 180.0 ) * M_PI;
-		int last_coord_x = X0 + outerRadius * cos( radian );
-		int last_coord_y = Y0 - outerRadius * sin( radian );
 	const int segmentMinAngle = 20;
 	float segmentsCount = (float)( abs( maxAngle - minAngle ) ) / (float)segmentMinAngle;
 	float deltaAngle = (float)( maxAngle - minAngle ) / (float)segmentsCount;
@@ -188,14 +183,6 @@ void GraphicSpring::initPartialCircleVertex()
 		int coordY = Y0 - outerRadius * sin( radian );
 
 		initCircleAtLinks( coordX, coordY, 3 );
-
-//		m_vertexBuffer.push_back( pixels_to_coords_x( last_coord_x ) );
-//		m_vertexBuffer.push_back( pixels_to_coords_y( last_coord_y ) );
-//		m_vertexBuffer.push_back( pixels_to_coords_x( coordX ) );
-//		m_vertexBuffer.push_back( pixels_to_coords_y( coordY ) );
-
-			last_coord_x = coordX;
-			last_coord_y = coordY;
 	}
 }
 
@@ -220,9 +207,6 @@ void GraphicSpring::initCompleteCircleVertex()
 	const GeometryLink * shorteslink = getShortesLink();
 	int outerRadius = shorteslink->getWidth() / 2;
 
-	const int innerRadius = 5;
-	initCircleAtLinks( geometrySpring->getLinkFrom()->getMiddleX(), geometrySpring->getLinkFrom()->getMiddleY(), innerRadius );
-
 	GetAnglesRangeBy2PointsPredicate getRange( linkFromAngle, linkToAngle, geometrySpring->getIsClosedPath() );
 
 	int minAngle = getRange.getMinAngle();
@@ -230,8 +214,6 @@ void GraphicSpring::initCompleteCircleVertex()
 
 	cout << "minAngle=" << minAngle << "; maxAngle=" << maxAngle << endl << flush;
 	float radian = ( (float)minAngle / 180.0 ) * M_PI;
-	int last_coord_x = X0 + outerRadius * cos( radian );
-	int last_coord_y = Y0 - outerRadius * sin( radian );
 	const int segmentMinAngle = 20;
 	float segmentsCount = (float)( abs( maxAngle - minAngle ) ) / (float)segmentMinAngle;
 	float deltaAngle = (float)( maxAngle - minAngle ) / (float)segmentsCount;
@@ -243,9 +225,6 @@ void GraphicSpring::initCompleteCircleVertex()
 		int coordY = Y0 - outerRadius * sin( radian );
 
 		initCircleAtLinks( coordX, coordY, 3 );
-
-		last_coord_x = coordX;
-		last_coord_y = coordY;
 	}
 }
 
@@ -274,11 +253,10 @@ void GraphicSpring::initCircleVertexes()
 		const GeometryPoint * linkFromAdjustmentPoint = getAngles.getLinkFromAdjacentPoint();
 		const GeometryPoint * linkToAdjustmentPoint = getAngles.getLinkToAdjacentPoint();
 
+		GeometrySpringGetShortestLinkPredicate getShortestLink( geometrySpring );
+		int shortHalfWidth = getShortestLink()->getWidth() / 2;
+
 		{
-			GeometrySpringGetShortestLinkPredicate getShortestLink( geometrySpring );
-
-			int shortHalfWidth = getShortestLink()->getWidth() / 2;
-
 			GetCoordsOnPhypotenuzeByWidth getWidthCoords( crossPoint, linkFromAdjustmentPoint, shortHalfWidth );
 
 			int widthX = getWidthCoords.getX();
@@ -290,13 +268,6 @@ void GraphicSpring::initCircleVertexes()
 		initPartialCircleVertex();
 
 		{
-			GeometrySpringGetShortestLinkPredicate getShortestLink( geometrySpring );
-
-			int shortHalfWidth = getShortestLink()->getWidth() / 2;
-			GeometrySpringGetAngles getAngles( geometrySpring );
-			const GeometryPoint * crossPoint = getAngles.getCrospoint();
-			const GeometryPoint * linkToAdjustmentPoint = getAngles.getLinkToAdjacentPoint();
-
 			GetCoordsOnPhypotenuzeByWidth getWidthCoords( crossPoint, linkToAdjustmentPoint, shortHalfWidth );
 			int widthX = getWidthCoords.getX();
 			int widthY = getWidthCoords.getY();
@@ -309,32 +280,28 @@ void GraphicSpring::initCircleVertexes()
 		const int innerRadius = 5;
 		GeometrySpringGetAngles getAngles( geometrySpring );
 		const GeometryPoint * crossPoint = getAngles.getCrospoint();
+		const GeometryPoint * linkFromAdjustmentPoint = getAngles.getLinkFromAdjacentPoint();
 		const GeometryPoint * linkToAdjustmentPoint = getAngles.getLinkToAdjacentPoint();
 
+		GeometrySpringGetShortestLinkPredicate getShortestLink( geometrySpring );
+		int shortHalfWidth = getShortestLink()->getWidth() / 2;
+
 		{
-			GeometrySpringGetShortestLinkPredicate getShortestLink( geometrySpring );
-
-			int shortHalfWidth = getShortestLink()->getWidth() / 2;
-
-			GetCoordsOnPhypotenuzeByWidth getWidthCoords( crossPoint, linkToAdjustmentPoint, shortHalfWidth );
+			GetCoordsOnPhypotenuzeByWidth getWidthCoords( crossPoint, linkFromAdjustmentPoint, shortHalfWidth );
 
 			int widthX = getWidthCoords.getX();
 			int widthY = getWidthCoords.getY();
 
-			initCircleAtLinks( geometrySpring->getLinkFrom()->getMiddleX(), geometrySpring->getLinkFrom()->getMiddleY(), innerRadius );
+			initCircleAtLinks( widthX, widthY, innerRadius );
 		}
 
 		initCompleteCircleVertex();
 
-		GeometrySpringGetShortestLinkPredicate getShortestLink( geometrySpring );
-
-		int Width = getShortestLink()->getWidth() / 2;
-
-		GetCoordsOnPhypotenuzeByWidth getWidthCoords( crossPoint, linkToAdjustmentPoint, Width );
+		GetCoordsOnPhypotenuzeByWidth getWidthCoords( crossPoint, linkToAdjustmentPoint, shortHalfWidth );
 		int widthX = getWidthCoords.getX();
 		int widthY = getWidthCoords.getY();
 
-		initCircleAtLinks( geometrySpring->getLinkTo()->getMiddleX(), geometrySpring->getLinkTo()->getMiddleY(), innerRadius );
+		initCircleAtLinks( widthX, widthY, innerRadius );
 	}
 }
 #include <fstream>
