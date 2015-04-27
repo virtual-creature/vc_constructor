@@ -30,10 +30,21 @@ using namespace std;
 #include "ToolbarContentButtonParams.h"
 #include "ToolbarContentRadio.h"
 #include "ToolbarContentRadioParams.h"
+#include "ToolbarContentCheck.h"
+#include "ToolbarContentCheckParams.h"
 #include "DynamicObjectsContructor.h"
 #include "GraphicObjectsContrucor.h"
+#include "SetRigidSpringBetweenUnusedLinksFunctor.h"
 
-#include "GetAnglesRangeBy3PointsPredicate.h"
+void on_fixed_unused_muscules( void * userData )
+{
+	SetRigidSpringBetweenUnusedLinksFunctor setRigid;
+}
+
+void on_unfixed_unused_muscules( void * userData )
+{
+
+}
 
 void on_construct_test_objects( void * userData )
 {
@@ -133,6 +144,9 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 
 	window.create();
 
+	window.setMaxSize( 800, 600 );
+	window.setSize( 800, 600 );
+
 	window.setListener( &windowListener );
 
 	MainContent mainContent( window.getEvasObject() );
@@ -186,6 +200,13 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 
 		toolbar.addToolbarContentItem( *item );
 	}
+	{
+		string title( "Fixed unsused muscules" );
+		ToolbarContentCheckParams * params = new ToolbarContentCheckParams( title, false, on_fixed_unused_muscules, on_unfixed_unused_muscules, &drawingContent );
+		ToolbarContentItem * item = new ToolbarContentCheck( *params );
+
+		toolbar.addToolbarContentItem( *item );
+	}
 
 	GeometrySceletonOperationTracking geoSceletonObjectTracking( drawingContent );
 	SimulationOperationTracking   geoEditingObjectTracking( drawingContent );
@@ -197,8 +218,6 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	MouseTrackerManager::getInstance().addTracker( &geoEditingObjectTracking );
 
 	MouseTrackerManager::getInstance().setMouseListenerTrackerMode( SCELETON_MODE_E );
-
-	window.setMaxSize( 800, 600 );
 
 	srand( time ( 0 ) );
 

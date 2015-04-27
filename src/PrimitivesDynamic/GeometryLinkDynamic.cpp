@@ -52,24 +52,19 @@ void GeometryLinkDynamic::initLink()
 	cpFloat moment = cpMomentForBox( mass, box_width - ballRadius * 2, box_height );
 	m_Body = cpBodyNew( mass, moment );
 
-	int from_x = getPointFrom()->getX();
-	int to_x = getPointTo()->getX();
-	int from_y = getPointFrom()->getY();
-	int to_y = getPointTo()->getY();
-
-	int from_to_center_x = ( from_x + to_x ) / 2;
-	int from_to_center_y = ( from_y + to_y ) / 2;
+	int from_to_center_x = getMiddleX();
+	int from_to_center_y = getMiddleY();
 
 	cpBodySetPosition( m_Body, cpv( from_to_center_x, from_to_center_y ) );
 
 
 	cpSpaceAddBody( m_Space, m_Body );
 
-//	m_Shape = cpBoxShapeNew( m_Body, box_width, box_height, 0.0 );
+	m_Shape = cpBoxShapeNew( m_Body, box_width, box_height, 0.0 );
 //
 //
 //	cpShapeSetFriction( m_Shape, 1 );
-//	cpSpaceAddShape( m_Space, m_Shape );
+	cpSpaceAddShape( m_Space, m_Shape );
 }
 
 void GeometryLinkDynamic::initJoints()

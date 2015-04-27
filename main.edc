@@ -1,33 +1,25 @@
-#define BUTTON_CIRCLE_STYLES(style_name, button_circle_normal, button_circle_press) \
-   group { name: "elm/button/base/"style_name; \
-      images { \
-         image: button_circle_normal COMP; \
-         image: button_circle_press COMP; \
-      } \
-      parts { \
-         part { name: "button_image"; \
-            description { state: "default" 0.0; \
-               image.normal: button_circle_normal; \
-            } \
-            description { \
-               state: "clicked" 0.0; \
-               inherit: "default" 0.0; \
-               image.normal: button_circle_press; \
-            } \
-			\
-         } \
-      } \
-   }
-
 collections
 {
-//	BUTTON_CIRCLE_STYLES( "button_custom_my", "M02_rich_text_bar_bold.png", "M02_rich_text_bar_bold.png" )
-
 	group
 	{
 		name:"main_layout";
 		parts
 		{
+			part
+			{
+				name:"part.main_layout.main_menu";
+				type: SWALLOW;
+				description
+				{
+					color : 0 255 0 255;
+					align: 0.0 0.0;
+					max: -1 30;
+					rel1
+	                {
+	                    relative: 0.0 0.0;
+	                }
+				}
+			}
 			part
 			{
 				name:"part.toolbar_layout.bg";
@@ -37,7 +29,8 @@ collections
 					color : 64 64 64 128;
 					rel1
                     {
-                        relative: 0.0 0.0;
+                        relative: 0.0 1.0;
+                        to_y:"part.main_layout.main_menu";
                     }
                     rel2
                     {
@@ -54,16 +47,13 @@ collections
 				{
 					state: "default" 0.0;
 					fixed: 1 1;
-					max: -1 100;
+					max: -1 30;
 					align: 0.0 0.0;
 					
 					rel1
                     {
-                        relative: 0.0 0.0;
-                    }
-                    rel2
-                    {
-                        relative: 0.1 0.1;
+                        relative: 0.0 1.0;
+                        to_y:"part.main_layout.main_menu";
                     }
 				}
 			}

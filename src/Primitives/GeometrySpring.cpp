@@ -20,12 +20,14 @@
 #include <cassert>
 using namespace std;
 
-GeometrySpring::GeometrySpring() : m_Id( rand() ), m_IsClosedPath( true ), m_State( GEOMETRYOBJECTCONSTRUCTING_NONE )
+GeometrySpring::GeometrySpring() :
+		m_Id( rand() ), m_IsClosedPath( true ), m_State( GEOMETRYOBJECTCONSTRUCTING_NONE ), m_IsRigid( false )
 {
 	memset( m_geometryLinks, 0, sizeof( m_geometryLinks ) );
 }
 
-GeometrySpring::GeometrySpring( const GeometryLink * linkFrom, const GeometryLink * linkTo ) : m_Id( rand() ), m_IsClosedPath( true ), m_State( GEOMETRYOBJECTCONSTRUCTING_NONE )
+GeometrySpring::GeometrySpring( const GeometryLink * linkFrom, const GeometryLink * linkTo ) :
+		m_Id( rand() ), m_IsClosedPath( true ), m_State( GEOMETRYOBJECTCONSTRUCTING_NONE ), m_IsRigid( false )
 {
 	m_geometryLinks[0] = linkFrom;
 	m_geometryLinks[1] = linkTo;
@@ -117,6 +119,16 @@ void GeometrySpring::setIsClosedPath( bool isClosedPath )
 bool GeometrySpring::getIsClosedPath() const
 {
 	return m_IsClosedPath;
+}
+
+void GeometrySpring::setIsRigid( bool isRigid )
+{
+	m_IsRigid = isRigid;
+}
+
+bool GeometrySpring::getIsRigid() const
+{
+	return m_IsRigid;
 }
 
 void GeometrySpring::setLinkFrom( const GeometryLink * linkFrom )

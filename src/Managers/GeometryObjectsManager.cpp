@@ -416,7 +416,7 @@ void GeometryObjectsManager::initTestingState2()
 	point_3->setY( 250 );
 	GeometryPoint * point_4 = (GeometryPoint *)GeometryObjectFactory::getInstance().createGeometryObject( GEOMETRYOBJECT_POINT );
 	point_4->setX( 400 );
-	point_4->setY( 210 );
+	point_4->setY( 200 );
 	GeometryLink * link_1 = (GeometryLink *)GeometryObjectFactory::getInstance().createGeometryObject( GEOMETRYOBJECT_LINK );
 	link_1->setPointFrom( point_1 );
 	link_1->setPointTo( point_2 );

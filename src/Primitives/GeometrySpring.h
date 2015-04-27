@@ -30,6 +30,8 @@ public:
 
 	void setIsClosedPath( int x, int y );
 	bool getIsClosedPath() const;
+	void setIsRigid( bool isRigid );
+	bool getIsRigid() const;
 
 	void setConstructingState( GeometryObjectsConstructiongStates state );
 
@@ -52,6 +54,8 @@ private:
 	int m_Id;
 
 	bool m_IsClosedPath;
+
+	bool m_IsRigid;
 
 	GeometryObjectsConstructiongStates m_State;
 };
