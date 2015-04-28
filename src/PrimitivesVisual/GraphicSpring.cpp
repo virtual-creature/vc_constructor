@@ -38,11 +38,11 @@ GraphicSpring::~GraphicSpring()
 
 void GraphicSpring::draw()
 {
-	if( false == m_geometrySpring->getIsRigid() )
+	if( true == m_geometrySpring->getIsRigid() )
 	{
-		initCircleVertexes();
-	}
-
+        return;
+    }
+	initCircleVertexes();
 	draw_line_2d();
 }
 
@@ -377,11 +377,6 @@ void GraphicSpring::draw_line_2d()
 
 	__evas_gl_glapi->glUseProgram( 0 );
 }
-
-
-
-
-
 
 
 
