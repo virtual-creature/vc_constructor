@@ -370,14 +370,6 @@ int DrawingContent::initShaders()
 	return 1;
 }
 
-float textures[] = {
-//   Texcoords
-    0.0f, 0.0f, // Top-left
-    1.0f, 0.0f, // Top-right
-    1.0f, 1.0f, // Bottom-right
-    0.0f, 1.0f // Bottom-left
-};
-
 float vertices[] = {
 //    Position
     -1.0f,  1.0f, // Top-left
@@ -477,6 +469,13 @@ void DrawingContent::initCanvasBackground()
 void DrawingContent::drawCanvasBackground()
 {
 	const int coordinates_in_point = 2;
+    float textures[] = {
+//   Texcoords
+    0.0f, 0.0f, // Top-left
+    m_CanvasWidth / 800.0 , 0.0f, // Top-right
+    m_CanvasWidth / 800.0, m_CanvasHeight / 600.0, // Bottom-right
+    0.0f, m_CanvasHeight / 600.0 // Bottom-left
+};
 
 	m_glApi->glUseProgram( m_Program );
 
