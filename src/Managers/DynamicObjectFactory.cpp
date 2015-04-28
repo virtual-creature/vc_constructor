@@ -104,26 +104,6 @@ IDynamicObject * DynamicObjectFactory::createDynamicObject( IGeometryObject * ge
 	return object;
 }
 
-IGraphicObject * DynamicObjectFactory::createGraphicObject( IDynamicObject * dynamicObject, Evas_Object * canvas )
-{
-	IGraphicObject * object = 0;
-	switch( dynamicObject->getGeometryObject().getType() )
-	{
-		case GEOMETRYOBJECT_POINT:
-				object = new GraphicPointDynamic( (GeometryPointDynamic *)dynamicObject, canvas );
-			break;
-		case GEOMETRYOBJECT_LINK:
-				object = new GraphicLinkDynamic( (GeometryLinkDynamic *)dynamicObject, canvas );
-			break;
-		case GEOMETRYOBJECT_SPRING:
-				object = new GraphicSpringDynamic( (GeometrySpringDynamic *)dynamicObject, canvas );
-			break;
-		default:
-			break;
-	}
-	return object;
-}
-
 void DynamicObjectFactory::setCanvasWidth( unsigned int width )
 {
 	m_CanvasWidth = width;

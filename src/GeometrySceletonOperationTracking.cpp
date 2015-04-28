@@ -10,10 +10,13 @@
 #include "GeometryObjectFactory.h"
 #include "GraphicLink.h"
 #include "GraphicObjectsContrucor.h"
+#include "GraphicObjectFactory.h"
 #include "GeometryLinkAddCondition.h"
 #include "MouseCoordinatesHolder.h"
 #include "GeometryLinkGetAbsoluteAnglePredicate.h"
+#include "GeometrySpringFindPredicate.h"
 #include <iostream>
+#include <algorithm>
 using namespace std;
 
 GeometrySceletonOperationTracking::GeometrySceletonOperationTracking( DrawingContent & viewUpdater ) : m_ViewUpdater( viewUpdater ), m_GeometryObjectTracking( 0 )
@@ -36,7 +39,7 @@ void GeometrySceletonOperationTracking::constructGraphicObjects( vector<IGraphic
 
 void GeometrySceletonOperationTracking::constructGraphicObject( IGeometryObject * geometryObject, IGraphicObject ** graphicObject )
 {
-	*graphicObject = GeometryObjectFactory::getInstance().createGraphicObject( geometryObject, m_ViewUpdater.getDrawingCanvas() );
+	*graphicObject = GraphicObjectFactory::getInstance().createGraphicObject( geometryObject, m_ViewUpdater.getDrawingCanvas() );
 }
 
 GeometryMouseTrackingModes GeometrySceletonOperationTracking::getType() const
@@ -161,10 +164,19 @@ void GeometrySceletonOperationTracking::trackerEnd( int x, int y )
 
 	if( m_GeometryObjectTracking->getType() == GEOMETRYOBJECT_SPRING )
 	{
-		GeometrySpring * geometrySpring = (GeometrySpring *)m_GeometryObjectTracking;
-		geometrySpring->setConstructingState( GEOMETRYOBJECTCONSTRUCTING_COMPLETE );
+		vector<IGeometryObject *> geometrySprings;
+		GeometryObjectsManager::getInstance().getSprings( geometrySprings );
 
-		changed = true;
+		GeometrySpring * geometrySpring = (GeometrySpring *)m_GeometryObjectTracking;
+		GeometrySpringFindPredicate findSpring( geometrySpring->getLinkFrom(), geometrySpring->getLinkTo() );
+		vector<IGeometryObject *>::iterator found_iter = find_if( geometrySprings.begin(), geometrySprings.end(), findSpring );
+
+		if( found_iter == geometrySprings.end() )// not found
+		{
+			geometrySpring->setConstructingState( GEOMETRYOBJECTCONSTRUCTING_COMPLETE );
+
+			changed = true;
+		}
 	}
 	else if( m_GeometryObjectTracking->getType() == GEOMETRYOBJECT_LINK )
 	{

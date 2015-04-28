@@ -8,6 +8,7 @@
 #include "GraphicObjectsContrucor.h"
 #include "DynamicObjectFactory.h"
 #include "GeometryObjectFactory.h"
+#include "GraphicObjectFactory.h"
 
 GraphicObjectsContrucor::GraphicObjectsContrucor() : m_Canvas( 0 )
 {
@@ -28,7 +29,7 @@ void GraphicObjectsContrucor::convert( vector<IGeometryObject *> & geometryObjec
 	vector<IGeometryObject *>::iterator iter = begin;
 	for(  ; iter != end ; iter ++ )
 	{
-		IGraphicObject * graphicObject = GeometryObjectFactory::getInstance().createGraphicObject( (* iter), m_Canvas );
+		IGraphicObject * graphicObject = GraphicObjectFactory::getInstance().createGraphicObject( (* iter), m_Canvas );
 
 		graphicObjects.push_back( graphicObject );
 	}
@@ -41,7 +42,7 @@ void GraphicObjectsContrucor::convert( vector<IDynamicObject *> & geometryObject
 	vector<IDynamicObject *>::iterator iter = begin;
 	for(  ; iter != end ; iter ++ )
 	{
-		IGraphicObject * graphicObject = DynamicObjectFactory::getInstance().createGraphicObject( (* iter), m_Canvas );
+		IGraphicObject * graphicObject = GraphicObjectFactory::getInstance().createGraphicObject( (* iter), m_Canvas );
 		if( 0 == graphicObject )
 		{
 			continue;

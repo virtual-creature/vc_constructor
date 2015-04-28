@@ -27,6 +27,7 @@ public:
 	void removeObjectSmart( IGeometryObject * object );
 	void clearObjects();
 	void getObjects( vector<IGeometryObject *> & objects );
+	void getSprings( vector<IGeometryObject *> & objects );
 	const IGeometryObject * getObject( int Id );
 	bool getPoint( int x, int y, GeometryPoint *& point );
 	bool getNearestPoint( const GeometryPoint & startPoint, int x, int y, const GeometryPoint * & point );

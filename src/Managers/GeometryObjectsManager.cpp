@@ -144,6 +144,22 @@ bool GeometryObjectsManager::getPoint( int x, int y, GeometryPoint *& point )
 	return false;
 }
 
+void GeometryObjectsManager::getSprings( vector<IGeometryObject *> & objects )
+{
+	vector<IGeometryObject *>::iterator begin = m_geometryObjects.begin();
+	vector<IGeometryObject *>::iterator end = m_geometryObjects.end();
+	vector<IGeometryObject *>::iterator iter = begin;
+	for( ; iter != end ; iter++ )
+	{
+		if( (*iter)->getType() != GEOMETRYOBJECT_SPRING )
+		{
+			continue;
+		}
+		GeometrySpring * geometrySpring = (GeometrySpring *)(*iter);
+		objects.push_back( geometrySpring );
+	}
+}
+
 bool GeometryObjectsManager::getNearestPoint( const GeometryPoint & startPoint,  int x, int y, const GeometryPoint * & point )
 {
 	vector<IGeometryObject *>::iterator begin = m_geometryObjects.begin();

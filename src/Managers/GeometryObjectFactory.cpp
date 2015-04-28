@@ -50,26 +50,6 @@ IGeometryObject * GeometryObjectFactory::createGeometryObject( GeometryObjectsTy
 	return object;
 }
 
-IGraphicObject * GeometryObjectFactory::createGraphicObject( IGeometryObject * geometryObject, Evas_Object * canvas )
-{
-	IGraphicObject * object = 0;
-	switch( geometryObject->getType() )
-	{
-		case GEOMETRYOBJECT_POINT:
-				object = new GraphicPoint( geometryObject, canvas );
-			break;
-		case GEOMETRYOBJECT_LINK:
-				object = new GraphicLink( geometryObject, canvas );
-			break;
-		case GEOMETRYOBJECT_SPRING:
-				object = new GraphicSpring( geometryObject, canvas );
-			break;
-		default:
-			break;
-	}
-	return object;
-}
-
 GeometryObjectFactory & GeometryObjectFactory::getInstance()
 {
 	static GeometryObjectFactory instance;

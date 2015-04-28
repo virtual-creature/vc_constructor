@@ -20,7 +20,6 @@ public:
 	virtual ~GeometryObjectFactory();
 
 	IGeometryObject * createGeometryObject( GeometryObjectsTypes type );
-	IGraphicObject * createGraphicObject( IGeometryObject * geometryObject, Evas_Object * canvas );
 
 	void deleteGeometryObject( IGeometryObject * geometryObject );
 
