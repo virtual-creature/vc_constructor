@@ -38,7 +38,10 @@ GraphicSpring::~GraphicSpring()
 
 void GraphicSpring::draw()
 {
-	initCircleVertexes();
+	if( false == m_geometrySpring->getIsRigid() )
+	{
+		initCircleVertexes();
+	}
 
 	draw_line_2d();
 }
