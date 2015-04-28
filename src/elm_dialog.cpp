@@ -20,7 +20,7 @@ using namespace std;
 #include "GeometrySceletonOperationTracking.h"
 #include "SimulationOperationTracking.h"
 #include <ctime>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "GeometryObjectsManager.h"
 #include "DynamicObjectsManager.h"
@@ -38,7 +38,17 @@ using namespace std;
 
 void on_fixed_unused_muscules( void * userData )
 {
+	DrawingContent * viewUpdater = (DrawingContent *)userData;
+
 	SetRigidSpringBetweenUnusedLinksFunctor setRigid;
+
+	vector<IGeometryObject *> geometryObjects;
+	vector<IGraphicObject *> graphicObjects;
+	GeometryObjectsManager::getInstance().getObjects( geometryObjects );
+	size_t count = geometryObjects.size();
+	GraphicObjectsContrucor::getInstance().convert( geometryObjects, graphicObjects );
+
+	viewUpdater->setGraphicObjects( graphicObjects );
 }
 
 void on_unfixed_unused_muscules( void * userData )

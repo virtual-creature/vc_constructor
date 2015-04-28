@@ -9,6 +9,7 @@
 #include "GeometryObjectsManager.h"
 #include "GeometrySpringFindPredicate.h"
 #include "GeometryLinksGetCrossPoint.h"
+#include "GeometryObjectFactory.h"
 #include <algorithm>
 #include <iostream>
 using namespace std;
@@ -18,18 +19,35 @@ SetRigidSpringBetweenUnusedLinksFunctor::SetRigidSpringBetweenUnusedLinksFunctor
 	vector<LinkPairType> unUsedPairLinks;
 	getUnUsedLinksPairs( unUsedPairLinks );
 
-	size_t count = unUsedPairLinks.size();
-	cout << "count=" << count << endl << flush;
+//	size_t count = unUsedPairLinks.size();
+//	cout << "count=" << count << endl << flush;
+	createRigidSprings( unUsedPairLinks );
 }
 
 SetRigidSpringBetweenUnusedLinksFunctor::~SetRigidSpringBetweenUnusedLinksFunctor()
 {
 }
 
+void SetRigidSpringBetweenUnusedLinksFunctor::createRigidSprings( vector<LinkPairType> & unUsedPairLinks )
+{
+	vector<LinkPairType>::iterator begin = unUsedPairLinks.begin();
+	vector<LinkPairType>::iterator end = unUsedPairLinks.end();
+	vector<LinkPairType>::iterator iter = begin;
+	for(  ; iter != end ; iter++ )
+	{
+		IGeometryObject * geometryObject = GeometryObjectFactory::getInstance().createGeometryObject( GEOMETRYOBJECT_SPRING );
+		GeometrySpring * geometrySpring = dynamic_cast<GeometrySpring *>( geometryObject );
+		geometrySpring->setLinkFrom( (* iter).m_Link1 );
+		geometrySpring->setLinkTo( (* iter).m_Link2 );
+		geometrySpring->setIsRigid( true );
+
+		GeometryObjectsManager::getInstance().addObject( geometrySpring );
+	}
+}
+
 void SetRigidSpringBetweenUnusedLinksFunctor::getUnUsedLinksPairs( vector<LinkPairType> & unUsedPairLinks )
 {
 	vector<IGeometryObject *> geometryObjects;
-	vector<IGeometryObject *> geometryPoints;
 	vector<IGeometryObject *> geometryLinks;
 	vector<IGeometryObject *> geometrySprings;
 	GeometryObjectsManager::getInstance().getObjects( geometryObjects );
@@ -41,9 +59,6 @@ void SetRigidSpringBetweenUnusedLinksFunctor::getUnUsedLinksPairs( vector<LinkPa
 	{
 		switch( (* iter)->getType() )
 		{
-			case GEOMETRYOBJECT_POINT:
-					geometryPoints.push_back( (* iter) );
-				break;
 			case GEOMETRYOBJECT_LINK:
 					geometryLinks.push_back( (* iter) );
 				break;
@@ -54,7 +69,7 @@ void SetRigidSpringBetweenUnusedLinksFunctor::getUnUsedLinksPairs( vector<LinkPa
 				break;
 		}
 	}
-//TODO : make smarter
+
 	vector<IGeometryObject *>::const_iterator linksBegin_Level_1 = geometryLinks.begin();
 	vector<IGeometryObject *>::const_iterator linksEnd_Level_1 = geometryLinks.end();
 	vector<IGeometryObject *>::const_iterator linksIter_Level_1 = linksBegin_Level_1;
@@ -87,6 +102,12 @@ void SetRigidSpringBetweenUnusedLinksFunctor::getUnUsedLinksPairs( vector<LinkPa
 				continue;
 			}
 			LinkPairType pair = { link1, link2 };
+			LinkPairFindPredicate linkPairFind( pair );
+			vector<LinkPairType>::iterator found_linkpair_iter = find_if( unUsedPairLinks.begin(), unUsedPairLinks.end(), linkPairFind );
+			if( found_linkpair_iter != unUsedPairLinks.end() )
+			{
+				continue;
+			}
 			unUsedPairLinks.push_back( pair );
 		}
 	}
