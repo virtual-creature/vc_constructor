@@ -21,6 +21,8 @@ public:
 	IGraphicObject * createGraphicObject( IGeometryObject * geometryObject, Evas_Object * canvas );
 	IGraphicObject * createGraphicObject( IDynamicObject * dynamicObject, Evas_Object * canvas );
 
+	void deleteGraphicObject( const IGraphicObject * graphicObject );
+
 	static GraphicObjectFactory & getInstance();
 };
 

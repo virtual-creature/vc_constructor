@@ -43,7 +43,6 @@ void GeometrySpringDynamic::initSpring()
 	int linkFromAbsoluteAngle = getAngles.getLinkFromAngle();
 	int linkToAbsoluteAngle = getAngles.getLinkToAngle();
 
-	int angleInt = abs( linkFromAbsoluteAngle - linkToAbsoluteAngle );
 //	float angle = M_PI / 180.0 * angleInt;
 
 	const GeometryLinkDynamic * linkFrom = getDynamicLinkFrom();

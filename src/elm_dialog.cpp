@@ -45,7 +45,6 @@ void on_fixed_unused_muscules( void * userData )
 	vector<IGeometryObject *> geometryObjects;
 	vector<IGraphicObject *> graphicObjects;
 	GeometryObjectsManager::getInstance().getObjects( geometryObjects );
-	size_t count = geometryObjects.size();
 	GraphicObjectsContrucor::getInstance().convert( geometryObjects, graphicObjects );
 
 	viewUpdater->setGraphicObjects( graphicObjects );

@@ -22,6 +22,12 @@ GraphicSpring::GraphicSpring( IGeometryObject * geometryObject, Evas_Object * ca
 	m_geometrySpring = (GeometrySpring *)geometryObject;
 
 	initShaders();
+
+	m_Color[0] = ( (float)( rand() % 255 ) ) / 255.0f;
+	m_Color[1] = ( (float)( rand() % 255 ) ) / 255.0f;
+	m_Color[2] = ( (float)( rand() % 255 ) ) / 255.0f;
+
+	m_ColorUniformIdx = m_glApi->glGetUniformLocation( m_Program, "color" );
 }
 
 GraphicSpring::GraphicSpring( const GraphicSpring & src )
@@ -38,9 +44,9 @@ GraphicSpring::~GraphicSpring()
 
 void GraphicSpring::draw()
 {
-	if( true == m_geometrySpring->getIsRigid() )
+//	if( true == m_geometrySpring->getIsRigid() )
 	{
-        return;
+//        return;
     }
 	initCircleVertexes();
 	draw_line_2d();
@@ -74,9 +80,10 @@ string GraphicSpring::getFragmentShader()
 {
 	string shader =	SHADER(
 \n
+\n		uniform vec3 color;
 \n		void main()
 \n		{
-\n			gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+\n			gl_FragColor = vec4( color.xyz, 1.0 );
 \n		}
 \n
 						);
@@ -369,7 +376,7 @@ void GraphicSpring::draw_line_2d()
 	__evas_gl_glapi->glUniformMatrix4fv( m_translate_idx, matrixCount, GL_FALSE, translateMatrix );
 	__evas_gl_glapi->glUniformMatrix4fv( m_scale_idx, matrixCount, GL_FALSE, scaleMatrix );
 	__evas_gl_glapi->glUniformMatrix4fv( m_rotate_idx, matrixCount, GL_FALSE, rotateMatrix );
-	__evas_gl_glapi->glUniform4f( m_color_idx, v_color[0], v_color[1], v_color[2], v_color[3] );
+	__evas_gl_glapi->glUniform3f( m_ColorUniformIdx, m_Color[0], m_Color[1], m_Color[2] );
 
 	__evas_gl_glapi->glDrawArrays( GL_TRIANGLES, 0, vertixesCount );
 

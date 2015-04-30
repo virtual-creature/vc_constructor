@@ -9,6 +9,7 @@
 #include "DrawingContent.h"
 #include "GeometryObjectsManager.h"
 #include "DynamicTimeLineManager.h"
+#include "GraphicObjectFactory.h"
 #include "GraphicObjectFindPredicate.h"
 #include <Elementary.h>
 #include <iostream>
@@ -232,9 +233,13 @@ void DrawingContent::clearObjects()
 	vector<IGraphicObject *>::iterator begin = m_GraphicObjects.begin();
 	vector<IGraphicObject *>::iterator end = m_GraphicObjects.end();
 	vector<IGraphicObject *>::iterator iter = begin;
-	for( ; iter != end ; iter++ )
+	size_t count = m_GraphicObjects.size();
+	for( size_t object_i = 0 ; object_i < count  ; object_i++ )
+//	for( ; iter != end ; iter++ )
 	{
-		delete (*iter);
+//		delete (*iter);
+		const IGraphicObject * graphicObject = dynamic_cast<const IGraphicObject *>( m_GraphicObjects[object_i] );
+		GraphicObjectFactory::getInstance().deleteGraphicObject( graphicObject );
 	}
 	m_GraphicObjects.clear();
 }
@@ -455,10 +460,10 @@ void DrawingContent::initCanvasBackground()
 	m_glApi->glActiveTexture( GL_TEXTURE0 );
 	m_glApi->glBindTexture( GL_TEXTURE_2D, m_textureIdx );
 
-	m_glApi->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-	m_glApi->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-	m_glApi->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-	m_glApi->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+	m_glApi->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+	m_glApi->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	m_glApi->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	m_glApi->glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
 //	m_glApi->glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, m_BackgroundWidth, m_BackgroundHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, &m_rgbRawData[0] );
 
@@ -472,9 +477,9 @@ void DrawingContent::drawCanvasBackground()
     float textures[] = {
 //   Texcoords
     0.0f, 0.0f, // Top-left
-    m_CanvasWidth / 800.0 , 0.0f, // Top-right
-    m_CanvasWidth / 800.0, m_CanvasHeight / 600.0, // Bottom-right
-    0.0f, m_CanvasHeight / 600.0 // Bottom-left
+    m_CanvasWidth / 800.0f , 0.0f, // Top-right
+    m_CanvasWidth / 800.0f, m_CanvasHeight / 600.0f, // Bottom-right
+    0.0f, m_CanvasHeight / 600.0f // Bottom-left
 };
 
 	m_glApi->glUseProgram( m_Program );

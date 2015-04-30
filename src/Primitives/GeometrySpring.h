@@ -55,9 +55,9 @@ private:
 
 	bool m_IsClosedPath;
 
-	bool m_IsRigid;
 
 	GeometryObjectsConstructiongStates m_State;
+	bool m_IsRigid;
 };
 
 #endif /* GEOMETRYSPRING_H_ */

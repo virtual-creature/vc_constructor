@@ -40,6 +40,10 @@ private:
 	GeometrySpring * m_geometrySpring;
 	unsigned int m_springRotateAngle;
 
+	GLuint m_ColorUniformIdx;
+
+	float m_Color[3];
+
 };
 
 #endif /* GRAPHICSPRING_H_ */

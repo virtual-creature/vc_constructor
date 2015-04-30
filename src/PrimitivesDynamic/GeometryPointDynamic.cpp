@@ -59,6 +59,8 @@ void GeometryPointDynamic::initPoint()
 	// The cpSpaceAdd*() functions return the thing that you are adding.
 	// It's convenient to create and add an object in one line.
 	m_BallBody = cpSpaceAddBody( m_Space, cpBodyNew( m_Mass, moment ) );
+//	m_BallBody = cpSpaceAddBody( m_Space, cpBodyNewKinematic() );
+
 //	m_OuterBody = cpSpaceAddBody( m_Space, cpBodyNew( m_Mass, emptyBodyMoment ) );
 	cpBodySetPosition( m_BallBody, cpv( getX(), getY() ) );
 //	cpBodySetPosition( m_OuterBody, cpv( getX(), getY() ) );

@@ -72,6 +72,11 @@ IGraphicObject * GraphicObjectFactory::createGraphicObject( IDynamicObject * dyn
 	return object;
 }
 
+void GraphicObjectFactory::deleteGraphicObject( const IGraphicObject * graphicObject )
+{
+	delete graphicObject;
+}
+
 GraphicObjectFactory & GraphicObjectFactory::getInstance()
 {
 	static GraphicObjectFactory instance;
