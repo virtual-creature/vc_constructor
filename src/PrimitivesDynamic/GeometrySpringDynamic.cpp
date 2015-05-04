@@ -40,8 +40,8 @@ GeometrySpringDynamic::~GeometrySpringDynamic()
 void GeometrySpringDynamic::initSpring()
 {
 	GeometrySpringGetAngles getAngles( this );
-	int linkFromAbsoluteAngle = getAngles.getLinkFromAngle();
-	int linkToAbsoluteAngle = getAngles.getLinkToAngle();
+//	int linkFromAbsoluteAngle = getAngles.getLinkFromAngle();
+//	int linkToAbsoluteAngle = getAngles.getLinkToAngle();
 
 //	float angle = M_PI / 180.0 * angleInt;
 
@@ -56,7 +56,6 @@ void GeometrySpringDynamic::initSpring()
 	float rotateAngle  = M_PI / 180.0 * rotateAngleInt;
 
 	m_ConstraintGear = cpSpaceAddConstraint( m_Space, cpGearJointNew( bodyFrom, bodyTo, rotateAngle, 1.0f ) );
-
 }
 
 void GeometrySpringDynamic::initJoints()
