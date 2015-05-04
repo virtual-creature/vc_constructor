@@ -36,6 +36,8 @@ GraphicSpring::GraphicSpring( const GraphicSpring & src )
 	m_springRotateAngle = src.m_springRotateAngle;
 
 	initShaders();
+
+	m_ColorUniformIdx = m_glApi->glGetUniformLocation( m_Program, "color" );
 }
 
 GraphicSpring::~GraphicSpring()
@@ -342,7 +344,7 @@ void GraphicSpring::draw_line_2d()
 	GLfloat translateMatrix[16];
 	GLfloat scaleMatrix[16];
 	GLfloat rotateMatrix[16];
-	GLfloat v_color[4] = { 0.9, 0.5, 1.0, 1.0 };
+//	GLfloat v_color[4] = { 0.9, 0.5, 1.0, 1.0 };
 
 	GLfloat perspective[16];
 	init_matrix( perspective );

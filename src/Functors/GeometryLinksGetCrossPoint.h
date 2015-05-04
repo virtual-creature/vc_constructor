@@ -11,7 +11,8 @@
 #include "GeometryLink.h"
 #include "GeometryPoint.h"
 
-class GeometryLinksGetCrossPoint {
+class GeometryLinksGetCrossPoint
+{
 public:
 	GeometryLinksGetCrossPoint( const GeometryLink * link1, const GeometryLink * link2 );
 	virtual ~GeometryLinksGetCrossPoint();

@@ -10,6 +10,7 @@
 
 #include "GeometryLink.h"
 #include <vector>
+#include <map>
 using namespace std;
 
 class SetRigidSpringBetweenUnusedLinksFunctor
@@ -48,7 +49,10 @@ public:
 
 private:
 
-	void getUnUsedLinksPairs( vector<LinkPairType> & unUsedPairLinks );
+	typedef map<const GeometryPoint *, vector<const GeometryLink *> > CrossLinksMap;
+
+	void getCrossLinksMap( CrossLinksMap & crossLinksMap );
+	void getUnUsedLinksPairs( CrossLinksMap & crossLinksMap, vector<LinkPairType> & unUsedPairLinks );
 	void createRigidSprings( vector<LinkPairType> & unUsedPairLinks );
 
 };

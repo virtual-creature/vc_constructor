@@ -33,6 +33,8 @@ GraphicLink::GraphicLink( const GeometryLink & src )
 	m_geometryLink = src;
 
 	initShaders();
+
+	m_SourcePointIdx = m_glApi->glGetUniformLocation( m_Program, "sourcePoint" );
 }
 
 GraphicLink & GraphicLink::operator = ( const GeometryLink & src )

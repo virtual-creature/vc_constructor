@@ -13,10 +13,10 @@
 class GeometryObjectFindPredicate
 {
 public:
-	GeometryObjectFindPredicate( IGeometryObject * origin );
+	GeometryObjectFindPredicate( const IGeometryObject * origin );
 	GeometryObjectFindPredicate( int Id );
 	~GeometryObjectFindPredicate();
-	bool operator()( IGeometryObject * object );
+	bool operator()( const IGeometryObject * object );
 private:
 	int m_Id;
 };

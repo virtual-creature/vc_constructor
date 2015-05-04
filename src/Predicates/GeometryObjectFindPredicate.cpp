@@ -7,7 +7,7 @@
 
 #include "GeometryObjectFindPredicate.h"
 
-GeometryObjectFindPredicate::GeometryObjectFindPredicate( IGeometryObject * origin )
+GeometryObjectFindPredicate::GeometryObjectFindPredicate( const IGeometryObject * origin )
 {
 	m_Id = origin->getId();
 }
@@ -21,7 +21,7 @@ GeometryObjectFindPredicate::~GeometryObjectFindPredicate()
 	;
 }
 
-bool GeometryObjectFindPredicate::operator()( IGeometryObject * object )
+bool GeometryObjectFindPredicate::operator()( const IGeometryObject * object )
 {
 	if( object->getId() == m_Id )
 	{

@@ -160,6 +160,38 @@ void GeometryObjectsManager::getSprings( vector<IGeometryObject *> & objects )
 	}
 }
 
+void GeometryObjectsManager::getPoints( vector<IGeometryObject *> & objects )
+{
+	vector<IGeometryObject *>::iterator begin = m_geometryObjects.begin();
+	vector<IGeometryObject *>::iterator end = m_geometryObjects.end();
+	vector<IGeometryObject *>::iterator iter = begin;
+	for( ; iter != end ; iter++ )
+	{
+		if( (*iter)->getType() != GEOMETRYOBJECT_POINT )
+		{
+			continue;
+		}
+		GeometrySpring * geometrySpring = (GeometrySpring *)(*iter);
+		objects.push_back( geometrySpring );
+	}
+}
+
+void GeometryObjectsManager::getLinks( vector<IGeometryObject *> & objects )
+{
+	vector<IGeometryObject *>::iterator begin = m_geometryObjects.begin();
+	vector<IGeometryObject *>::iterator end = m_geometryObjects.end();
+	vector<IGeometryObject *>::iterator iter = begin;
+	for( ; iter != end ; iter++ )
+	{
+		if( (*iter)->getType() != GEOMETRYOBJECT_LINK )
+		{
+			continue;
+		}
+		GeometrySpring * geometrySpring = (GeometrySpring *)(*iter);
+		objects.push_back( geometrySpring );
+	}
+}
+
 bool GeometryObjectsManager::getNearestPoint( const GeometryPoint & startPoint,  int x, int y, const GeometryPoint * & point )
 {
 	vector<IGeometryObject *>::iterator begin = m_geometryObjects.begin();

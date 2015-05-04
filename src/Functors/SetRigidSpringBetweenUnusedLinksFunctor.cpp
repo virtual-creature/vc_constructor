@@ -8,8 +8,11 @@
 #include "SetRigidSpringBetweenUnusedLinksFunctor.h"
 #include "GeometryObjectsManager.h"
 #include "GeometrySpringFindPredicate.h"
+#include "GeometryObjectFindPredicate.h"
 #include "GeometryLinksGetCrossPoint.h"
 #include "GeometryObjectFactory.h"
+#include "SortGeometryLinksPredicate.h"
+#include "GeometrySpringGetAngles.h"
 #include <algorithm>
 #include <iostream>
 using namespace std;
@@ -17,15 +20,57 @@ using namespace std;
 SetRigidSpringBetweenUnusedLinksFunctor::SetRigidSpringBetweenUnusedLinksFunctor()
 {
 	vector<LinkPairType> unUsedPairLinks;
-	getUnUsedLinksPairs( unUsedPairLinks );
+	CrossLinksMap crossLinksMap;
+	getCrossLinksMap( crossLinksMap );
 
-//	size_t count = unUsedPairLinks.size();
-//	cout << "count=" << count << endl << flush;
+	getUnUsedLinksPairs( crossLinksMap, unUsedPairLinks );
+
+	size_t count = unUsedPairLinks.size();
+	cout << "count=" << count << endl << flush;
 	createRigidSprings( unUsedPairLinks );
 }
 
 SetRigidSpringBetweenUnusedLinksFunctor::~SetRigidSpringBetweenUnusedLinksFunctor()
 {
+}
+
+void SetRigidSpringBetweenUnusedLinksFunctor::getCrossLinksMap( CrossLinksMap & crossLinksMap )
+{
+	vector<IGeometryObject *> geometryLinks;
+	vector<const IGeometryObject *> crossPoints;
+	GeometryObjectsManager::getInstance().getLinks( geometryLinks );
+	vector<IGeometryObject *>::iterator linksBegin_Level_1 = geometryLinks.begin();
+	vector<IGeometryObject *>::iterator linksEnd_Level_1 = geometryLinks.end();
+	vector<IGeometryObject *>::iterator linksIter_Level_1 = linksBegin_Level_1;
+	for(  ; linksIter_Level_1 != linksEnd_Level_1 ; linksIter_Level_1++ )
+	{
+		vector<IGeometryObject *>::iterator linksBegin_Level_2 = geometryLinks.begin();
+		vector<IGeometryObject *>::iterator linksEnd_Level_2 = geometryLinks.end();
+		vector<IGeometryObject *>::iterator linksIter_Level_2 = linksBegin_Level_2;
+		for(  ; linksIter_Level_2 != linksEnd_Level_2 ; linksIter_Level_2++ )
+		{
+			if( linksIter_Level_1 == linksIter_Level_2 )
+			{
+				continue;
+			}
+
+			const GeometryLink * link1 = dynamic_cast<const GeometryLink *>(* linksIter_Level_1);
+			const GeometryLink * link2 = dynamic_cast<const GeometryLink *>(* linksIter_Level_2);
+
+			GeometryLinksGetCrossPoint getCrosslink( link1, link2 );
+
+			if( false == getCrosslink.getHasCrosslink() )
+			{
+				continue;
+			}
+
+			crossLinksMap[ getCrosslink.getCrosslink() ].push_back( link1 );
+			crossLinksMap[ getCrosslink.getCrosslink() ].push_back( link2 );
+
+			crossPoints.push_back( getCrosslink.getCrosslink() );
+
+		}
+	}
 }
 
 void SetRigidSpringBetweenUnusedLinksFunctor::createRigidSprings( vector<LinkPairType> & unUsedPairLinks )
@@ -45,69 +90,48 @@ void SetRigidSpringBetweenUnusedLinksFunctor::createRigidSprings( vector<LinkPai
 	}
 }
 
-void SetRigidSpringBetweenUnusedLinksFunctor::getUnUsedLinksPairs( vector<LinkPairType> & unUsedPairLinks )
+bool equal_func( const GeometryLink * link1, const GeometryLink * link2 )
 {
-	vector<IGeometryObject *> geometryObjects;
-	vector<IGeometryObject *> geometryLinks;
-	vector<IGeometryObject *> geometrySprings;
-	GeometryObjectsManager::getInstance().getObjects( geometryObjects );
-
-	vector<IGeometryObject *>::iterator begin = geometryObjects.begin();
-	vector<IGeometryObject *>::iterator end = geometryObjects.end();
-	vector<IGeometryObject *>::iterator iter = begin;
-	for(  ; iter != end ; iter++ )
+	if( link1->getId() == link2->getId() )
 	{
-		switch( (* iter)->getType() )
-		{
-			case GEOMETRYOBJECT_LINK:
-					geometryLinks.push_back( (* iter) );
-				break;
-			case GEOMETRYOBJECT_SPRING:
-					geometrySprings.push_back( (* iter) );
-				break;
-			default:
-				break;
-		}
+		return true;
 	}
+	return false;
+}
 
-	vector<IGeometryObject *>::const_iterator linksBegin_Level_1 = geometryLinks.begin();
-	vector<IGeometryObject *>::const_iterator linksEnd_Level_1 = geometryLinks.end();
-	vector<IGeometryObject *>::const_iterator linksIter_Level_1 = linksBegin_Level_1;
-	for(  ; linksIter_Level_1 != linksEnd_Level_1 ; linksIter_Level_1++ )
+void SetRigidSpringBetweenUnusedLinksFunctor::getUnUsedLinksPairs( CrossLinksMap & crossLinksMap, vector<LinkPairType> & unUsedPairLinks )
+{
+	CrossLinksMap::iterator mapBegin = crossLinksMap.begin();
+	CrossLinksMap::iterator mapEnd = crossLinksMap.end();
+	CrossLinksMap::iterator mapIter = mapBegin;
+
+	SortGeometryLinksPredicate sortPredicate;
+
+	for(  ; mapIter != mapEnd ; mapIter++ )
 	{
-		vector<IGeometryObject *>::const_iterator linksBegin_Level_2 = geometryLinks.begin();
-		vector<IGeometryObject *>::const_iterator linksEnd_Level_2 = geometryLinks.end();
-		vector<IGeometryObject *>::const_iterator linksIter_Level_2 = linksBegin_Level_2;
-		for(  ; linksIter_Level_2 != linksEnd_Level_2 ; linksIter_Level_2++ )
+		vector<const GeometryLink *> savedLinks;
+		vector<const GeometryLink *>::iterator it;
+		savedLinks = (* mapIter).second;
+
+		std::sort( savedLinks.begin(), savedLinks.end() );
+		it = unique_copy( savedLinks.begin(), savedLinks.end(), savedLinks.begin() );
+		int distance = std::distance( savedLinks.begin(), it );
+		savedLinks.resize( distance );
+
+		std::sort( savedLinks.begin(), savedLinks.end(), sortPredicate );
+
+		vector<const GeometryLink *>::iterator linksBegin = savedLinks.begin();
+		vector<const GeometryLink *>::iterator linksEnd = savedLinks.end();
+		vector<const GeometryLink *>::iterator linksIter = ( linksBegin + 1 );
+		for(  ; linksIter != linksEnd ; linksIter++ )
 		{
-			if( linksIter_Level_1 == linksIter_Level_2 )
-			{
-				continue;
-			}
+			const GeometryLink * linkPrev = ( *( linksIter - 1 ) );
+			const GeometryLink * linkCurr = ( *( linksIter ) );
 
-			const GeometryLink * link1 = dynamic_cast<const GeometryLink *>(* linksIter_Level_1);
-			const GeometryLink * link2 = dynamic_cast<const GeometryLink *>(* linksIter_Level_2);
+			GeometrySpringGetAngles getAngles( linkPrev, linkCurr );
 
-			GeometryLinksGetCrossPoint getCrosslink( link1, link2 );
+			LinkPairType pair = { linkPrev, linkCurr };
 
-			if( false == getCrosslink.getHasCrosslink() )
-			{
-				continue;
-			}
-
-			GeometrySpringFindPredicate springFindPredicate( link1, link2 );
-			vector<IGeometryObject *>::iterator found_iter = find_if( geometrySprings.begin(), geometrySprings.end(), springFindPredicate );
-			if( found_iter != geometrySprings.end() )// combination no found
-			{
-				continue;
-			}
-			LinkPairType pair = { link1, link2 };
-			LinkPairFindPredicate linkPairFind( pair );
-			vector<LinkPairType>::iterator found_linkpair_iter = find_if( unUsedPairLinks.begin(), unUsedPairLinks.end(), linkPairFind );
-			if( found_linkpair_iter != unUsedPairLinks.end() )
-			{
-				continue;
-			}
 			unUsedPairLinks.push_back( pair );
 		}
 	}

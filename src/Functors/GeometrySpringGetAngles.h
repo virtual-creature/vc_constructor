@@ -9,14 +9,16 @@
 #define FUNCTORS_GEOMETRYSPRINGGETANGLES_H_
 
 #include "GeometrySpring.h"
+#include "GeometryLink.h"
 
 class GeometrySpringGetAngles
 {
 public:
 	GeometrySpringGetAngles( const GeometrySpring * geometrySpring );
+	GeometrySpringGetAngles( const GeometryLink * geometryLink1, const GeometryLink * geometryLink2 );
 	virtual ~GeometrySpringGetAngles();
 
-	bool getIsValid() const;
+	bool getHasCrospoint() const;
 
 	int getLinkFromAngle() const;
 	int getLinkToAngle() const;
@@ -28,7 +30,8 @@ public:
 
 private:
 
-	const GeometrySpring * m_GeometrySpring;
+	const GeometryLink * m_GeometryLinkFrom;
+	const GeometryLink * m_GeometryLinkTo;
 
 	const GeometryPoint * m_CrossPoint;
 

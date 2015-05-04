@@ -6,14 +6,33 @@
  */
 
 #include "GeometrySpringGetAngles.h"
+#include "GeometryLinksGetCrossPoint.h"
 #include "GeometrySpringGetCrosslinkPredicate.h"
 #include "GeometryLinkGetAbsoluteAnglePredicate.h"
+#include <cassert>
+using namespace std;
 
-GeometrySpringGetAngles::GeometrySpringGetAngles( const GeometrySpring * geometrySpring ) :
-	m_GeometrySpring( geometrySpring ), m_CrossPoint( 0 )
+GeometrySpringGetAngles::GeometrySpringGetAngles( const GeometrySpring * geometrySpring ) : m_CrossPoint( 0 )
 {
-	GeometrySpringGetCrosslinkPredicate getCrosspoint( m_GeometrySpring );
+	GeometrySpringGetCrosslinkPredicate getCrosspoint( geometrySpring );
+	m_GeometryLinkFrom = ( geometrySpring->getLinkFrom() );
+	m_GeometryLinkTo = ( geometrySpring->getLinkTo() );
 	m_CrossPoint = getCrosspoint();
+}
+
+GeometrySpringGetAngles::GeometrySpringGetAngles( const GeometryLink * geometryLink1, const GeometryLink * geometryLink2 )
+{
+	GeometryLinksGetCrossPoint getCrosslink( geometryLink1, geometryLink2 );
+
+	if( false == getCrosslink.getHasCrosslink() )
+	{
+		assert( false );
+	}
+
+	m_CrossPoint = getCrosslink.getCrosslink();
+
+	m_GeometryLinkFrom = geometryLink1;
+	m_GeometryLinkTo = geometryLink2;
 
 }
 
@@ -21,7 +40,7 @@ GeometrySpringGetAngles::~GeometrySpringGetAngles()
 {
 }
 
-bool GeometrySpringGetAngles::getIsValid() const
+bool GeometrySpringGetAngles::getHasCrospoint() const
 {
 	return m_CrossPoint != NULL;
 }
@@ -35,13 +54,13 @@ const GeometryPoint * GeometrySpringGetAngles::getLinkFromAdjacentPoint() const
 {
 	const GeometryPoint * result = NULL;
 
-	if( m_GeometrySpring->getLinkFrom()->getPointFrom() == getCrospoint() )
+	if( m_GeometryLinkFrom->getPointFrom() == getCrospoint() )
 	{
-		result = m_GeometrySpring->getLinkFrom()->getPointTo();
+		result = m_GeometryLinkFrom->getPointTo();
 	}
 	else
 	{
-		result = m_GeometrySpring->getLinkFrom()->getPointFrom();
+		result = m_GeometryLinkFrom->getPointFrom();
 	}
 
 	return result;
@@ -51,13 +70,13 @@ const GeometryPoint * GeometrySpringGetAngles::getLinkToAdjacentPoint() const
 {
 	const GeometryPoint * result = NULL;
 
-	if( m_GeometrySpring->getLinkTo()->getPointFrom() == getCrospoint() )
+	if( m_GeometryLinkTo->getPointFrom() == getCrospoint() )
 	{
-		result = m_GeometrySpring->getLinkTo()->getPointTo();
+		result = m_GeometryLinkTo->getPointTo();
 	}
 	else
 	{
-		result = m_GeometrySpring->getLinkTo()->getPointFrom();
+		result = m_GeometryLinkTo->getPointFrom();
 	}
 
 	return result;
