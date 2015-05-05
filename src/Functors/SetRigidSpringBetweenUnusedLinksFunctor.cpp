@@ -82,8 +82,8 @@ void SetRigidSpringBetweenUnusedLinksFunctor::createRigidSprings( vector<LinkPai
 	{
 		IGeometryObject * geometryObject = GeometryObjectFactory::getInstance().createGeometryObject( GEOMETRYOBJECT_SPRING );
 		GeometrySpring * geometrySpring = dynamic_cast<GeometrySpring *>( geometryObject );
-		geometrySpring->setLinkFrom( (* iter).m_Link2 );
-		geometrySpring->setLinkTo( (* iter).m_Link1 );
+		geometrySpring->setLinkFrom( (* iter).m_Link1 );
+		geometrySpring->setLinkTo( (* iter).m_Link2 );
 		geometrySpring->setIsRigid( true );
 
 		GeometryObjectsManager::getInstance().addObject( geometrySpring );
@@ -128,9 +128,9 @@ void SetRigidSpringBetweenUnusedLinksFunctor::getUnUsedLinksPairs( CrossLinksMap
 			const GeometryLink * linkPrev = ( *( linksIter - 1 ) );
 			const GeometryLink * linkCurr = ( *( linksIter ) );
 
-			GeometrySpringGetAngles getAngles( linkPrev, linkCurr );
+			GeometrySpringGetAngles getAngles( linkCurr, linkPrev );
 
-			LinkPairType pair = { linkPrev, linkCurr };
+			LinkPairType pair = { linkCurr, linkPrev };
 
 			unUsedPairLinks.push_back( pair );
 		}
