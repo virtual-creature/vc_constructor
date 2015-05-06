@@ -23,12 +23,11 @@ void DynamicTimeLineManager::setSpace( cpSpace * space )
 void DynamicTimeLineManager::stepSpace()
 {
 	float timeStep = ( 1.0 / 30.0 ) / 12.0;
-	cpSpaceStep( m_Space, timeStep );
-	cpSpaceStep( m_Space, timeStep );
-	cpSpaceStep( m_Space, timeStep );
-	cpSpaceStep( m_Space, timeStep );
-	cpSpaceStep( m_Space, timeStep );
-	cpSpaceStep( m_Space, timeStep );
+	const unsigned int steps_count = 20;
+	for( unsigned int step_i = 0 ; step_i < steps_count ; step_i++ )
+	{
+		cpSpaceStep( m_Space, timeStep );
+	}
 }
 
 DynamicTimeLineManager & DynamicTimeLineManager::getInstance()

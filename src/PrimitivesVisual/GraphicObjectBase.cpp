@@ -23,8 +23,6 @@ GraphicObjectBase::GraphicObjectBase( Evas_Object * glview ) : m_vertexesBufferO
 {
 	m_glApi = elm_glview_gl_api_get( glview );
 
-	m_glApi->glEnable( GL_POINT_SIZE );
-
 	elm_glview_size_get( glview, &m_DrawCanvasWidth, &m_DrawCanvasHeight );
 
 	initProjectionMatrix( m_projectionMatrix );

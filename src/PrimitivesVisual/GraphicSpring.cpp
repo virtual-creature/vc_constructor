@@ -28,6 +28,7 @@ GraphicSpring::GraphicSpring( IGeometryObject * geometryObject, Evas_Object * ca
 	m_Color[2] = ( (float)( rand() % 255 ) ) / 255.0f;
 
 	m_ColorUniformIdx = m_glApi->glGetUniformLocation( m_Program, "color" );
+	m_CenterIdx = m_glApi->glGetAttribLocation( m_Program, "centerPos" );
 }
 
 GraphicSpring::GraphicSpring( const GraphicSpring & src )
@@ -38,6 +39,7 @@ GraphicSpring::GraphicSpring( const GraphicSpring & src )
 	initShaders();
 
 	m_ColorUniformIdx = m_glApi->glGetUniformLocation( m_Program, "color" );
+	m_CenterIdx = m_glApi->glGetAttribLocation( m_Program, "centerPos" );
 }
 
 GraphicSpring::~GraphicSpring()
@@ -67,10 +69,14 @@ string GraphicSpring::getVertexShader()
 		uniform mat4 perspective;
 		uniform mat4 translate;
 		uniform mat4 scale;
+		varying vec2 fragPos;
+		attribute vec2 centerPos;
+		varying vec2 varCenter;
 		void main()
 		{
-			gl_PointSize = 100.0;
 			gl_Position = perspective * translate * scale * vec4( vPosition.xy, 0.0, 1.0 );
+			fragPos = vPosition.xy;
+			varCenter = centerPos;
 		}
 
 						);
@@ -83,9 +89,12 @@ string GraphicSpring::getFragmentShader()
 	string shader =	SHADER(
 \n
 \n		uniform vec3 color;
+\n		varying vec2 fragPos;
+\n		varying vec2 varCenter;
 \n		void main()
 \n		{
-\n			gl_FragColor = vec4( color.xyz, 1.0 );
+\n			float vectorLen = distance( fragPos, varCenter );
+\n			gl_FragColor = vec4( color.xyz, 1.0 - vectorLen );
 \n		}
 \n
 						);
@@ -112,7 +121,7 @@ void GraphicSpring::initLineVertexes()
 
 void GraphicSpring::initCircleAtLinks( int x0, int y0, int radius )
 {
-	const int vertexNumber = 20;
+	const int vertexNumber = 49;
 
 	float ang = 0;
 	float da = (float) (M_PI / 180 * (360.0f / vertexNumber));
@@ -194,7 +203,7 @@ void GraphicSpring::initPartialCircleVertex()
 		int coordX = X0 + outerRadius * cos( radian );
 		int coordY = Y0 - outerRadius * sin( radian );
 
-		initCircleAtLinks( coordX, coordY, 3 );
+		initCircleAtLinks( coordX, coordY, 8 );
 	}
 }
 
@@ -236,7 +245,7 @@ void GraphicSpring::initCompleteCircleVertex()
 		int coordX = X0 + outerRadius * cos( radian );
 		int coordY = Y0 - outerRadius * sin( radian );
 
-		initCircleAtLinks( coordX, coordY, 3 );
+		initCircleAtLinks( coordX, coordY, 8 );
 	}
 }
 
@@ -257,9 +266,9 @@ void GraphicSpring::initCircleVertexes()
 
 	GeometrySpringGetCrosslinkPredicate getCrosslinkPoint( geometrySpring );
 
+	const int innerRadius = 13;
 	if( geometrySpring->getConstructingState() == GEOMETRYOBJECTCONSTRUCTING_INPROGRESS )
 	{
-		const int innerRadius = 5;
 		GeometrySpringGetAngles getAngles( geometrySpring );
 		const GeometryPoint * crossPoint = getAngles.getCrospoint();
 		const GeometryPoint * linkFromAdjustmentPoint = getAngles.getLinkFromAdjacentPoint();
@@ -289,7 +298,6 @@ void GraphicSpring::initCircleVertexes()
 	}
 	else
 	{
-		const int innerRadius = 5;
 		GeometrySpringGetAngles getAngles( geometrySpring );
 		const GeometryPoint * crossPoint = getAngles.getCrospoint();
 		const GeometryPoint * linkFromAdjustmentPoint = getAngles.getLinkFromAdjacentPoint();
@@ -372,6 +380,11 @@ void GraphicSpring::draw_line_2d()
 
 	__evas_gl_glapi->glVertexAttribPointer( m_positionIdx, coordinates_in_point, GL_FLOAT, GL_FALSE, coordinates_in_point * sizeof(GLfloat), &m_vertexBuffer[0] );
 
+	__evas_gl_glapi->glEnableVertexAttribArray( m_CenterIdx );
+
+	__evas_gl_glapi->glVertexAttribPointer( m_CenterIdx, coordinates_in_point, GL_FLOAT, GL_FALSE, coordinates_in_point * 3 * sizeof(GLfloat), &m_vertexBuffer[4] );
+
+
 	const int matrixCount = 1;
 
 	__evas_gl_glapi->glUniformMatrix4fv( m_perspective_idx, matrixCount, GL_FALSE, perspective );
@@ -380,9 +393,26 @@ void GraphicSpring::draw_line_2d()
 	__evas_gl_glapi->glUniformMatrix4fv( m_rotate_idx, matrixCount, GL_FALSE, rotateMatrix );
 	__evas_gl_glapi->glUniform3f( m_ColorUniformIdx, m_Color[0], m_Color[1], m_Color[2] );
 
+	__evas_gl_glapi->glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	__evas_gl_glapi->glEnable( GL_BLEND );
+
+//	for( unsigned int index_i = 0 ; index_i < 150 ; index_i += 3 )
+//	{
+//		unsigned int * indices = new unsigned int[3];
+//		indices[0] = index_i;
+//		indices[1] = index_i + 1;
+//		indices[2] = index_i + 2;
+//
+//		__evas_gl_glapi->glDrawElements( GL_TRIANGLES, 3, GL_UNSIGNED_INT, indices );
+//
+//		delete[] indices;
+//	}
 	__evas_gl_glapi->glDrawArrays( GL_TRIANGLES, 0, vertixesCount );
 
+	__evas_gl_glapi->glDisable( GL_BLEND );
+
 	__evas_gl_glapi->glDisableVertexAttribArray( m_positionIdx );
+	__evas_gl_glapi->glDisableVertexAttribArray( m_CenterIdx );
 
 	__evas_gl_glapi->glUseProgram( 0 );
 }

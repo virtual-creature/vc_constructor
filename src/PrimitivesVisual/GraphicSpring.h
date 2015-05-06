@@ -41,6 +41,7 @@ private:
 	unsigned int m_springRotateAngle;
 
 	GLuint m_ColorUniformIdx;
+	GLuint m_CenterIdx;
 
 	float m_Color[3];
 

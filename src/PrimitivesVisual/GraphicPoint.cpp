@@ -121,14 +121,16 @@ string GraphicPoint::getVertexShader()
 {
 	string shader = SHADER(
 
-attribute vec3 vPosition;
-uniform mat4 perspective;
-uniform mat4 translate;
-uniform mat4 scale;
-void main()
-{
-   gl_Position = perspective * translate * scale * vec4( vPosition, 1.0 );
-}
+		attribute vec3 vPosition;
+		uniform mat4 perspective;
+		uniform mat4 translate;
+		uniform mat4 scale;
+		varying vec2 fragPos;
+		void main()
+		{
+		   gl_Position = perspective * translate * scale * vec4( vPosition, 1.0 );
+		   fragPos = vPosition.xy;
+		}
 
 						);
 
@@ -139,10 +141,12 @@ string GraphicPoint::getFragmentShader()
 {
 	string shader =	SHADER(
 
-void main()
-{
-	gl_FragColor = vec4( 0.5, 0.5, 1.0, 1.0 );
-}
+		varying vec2 fragPos;
+		void main()
+		{
+			float vectorLen = length( fragPos );
+			gl_FragColor = vec4( 0.5, 1.0, 1.0, 1.0 - vectorLen );
+		}
 
 						);
 
@@ -240,9 +244,12 @@ void GraphicPoint::draw_circle_2d()
 	__evas_gl_glapi->glUniformMatrix4fv( m_rotate_idx, 1, GL_FALSE, rotateMatrix );
 	__evas_gl_glapi->glUniform4f( m_color_idx, v_color[0], v_color[1], v_color[2], v_color[3] );
 
-
+	__evas_gl_glapi->glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	__evas_gl_glapi->glEnable( GL_BLEND );
 
 	__evas_gl_glapi->glDrawArrays( GL_TRIANGLE_FAN, 0, vertixesCount );
+
+	__evas_gl_glapi->glDisable( GL_BLEND );
 
 	__evas_gl_glapi->glDisableVertexAttribArray( m_positionIdx );
 
