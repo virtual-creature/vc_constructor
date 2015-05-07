@@ -39,7 +39,6 @@ private:
 	GeometryPoint * m_Point;
 
 	void initCircleVertex();
-	void initQuadVertex();
 	void initVertex();
 
 	void draw_circle_2d();

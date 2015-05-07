@@ -56,44 +56,6 @@ IGeometryObject & GraphicPoint::getGeometryObject()
 	return *m_Point;
 }
 
-void GraphicPoint::initQuadVertex()
-{
-//	GLfloat vVertices[] = {//By Points
-//			-0.5f,  0.5f,// 0.0f,
-//			 0.5f,  0.5f,// 0.0f,
-//			 0.5f, -0.5f,// 0.0f,
-//			-0.5f, -0.5f,// 0.0f,
-//	};
-
-//	GLfloat vVertices[] = {//By Lines 3D
-//				-0.05f,  0.05f, 0.0f,      0.05f,  0.05f, 0.0f,
-//				 0.05f,  0.05f, 0.0f,      0.05f, -0.05f, 0.0f,
-//				 0.05f, -0.05f, 0.0f,     -0.05f, -0.05f, 0.0f,
-//				-0.05f, -0.05f, 0.0f,     -0.05f,  0.05f, 0.0f
-//		};
-
-	GLfloat vVertices[] = {//By Lines 2D
-				-1.0f,  1.0f,      1.0f,  1.0f,
-				 1.0f,  1.0f,      1.0f, -1.0f,
-				 1.0f, -1.0f,     -1.0f, -1.0f,
-				-1.0f, -1.0f,     -1.0f,  1.0f,
-				-1.0f,  1.0f,
-		};
-
-//	GLfloat vVertices[] = {//By Triangles
-//			// Left bottom triangle
-//			-0.05f,  0.05f, 0.0f,
-//			-0.05f, -0.05f, 0.0f,
-//			 0.05f, -0.05f, 0.0f,
-//			// Right top triangle
-//			 0.05f, -0.05f, 0.0f,
-//			 0.05f,  0.05f, 0.0f,
-//			-0.05f,  0.05f, 0.0f
-//	};
-
-//	m_vertexBuffer.assign( vVertices, vVertices + sizeof( vVertices )/ sizeof( vVertices[0]) );
-}
-
 void GraphicPoint::initCircleVertex()
 {
 	vector<GLfloat> objectVertexes;
@@ -101,7 +63,6 @@ void GraphicPoint::initCircleVertex()
 
 	float ang = 0;
 	float da = (float) (M_PI / 180 * (360.0f / vertexNumber));
-//	const unsigned int coordinates_in_point = 2;
 
 
 	{//Circle Points
@@ -111,7 +72,6 @@ void GraphicPoint::initCircleVertex()
 			float fcos = cos( ang );
 			objectVertexes.push_back( fcos );
 			objectVertexes.push_back( fsin );
-	//		m_vertexBuffer.push_back( 0.0 );
 
 			ang += da;
 		}

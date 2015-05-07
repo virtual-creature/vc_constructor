@@ -90,8 +90,6 @@ void GraphicSpring::initCircleAtLinks( int x0, int y0, int radius )
 	{//Circle Points
 		float first_coord_x = 0 + 1.0 * cos( ang );
 		float first_coord_y = 0 + 1.0 * sin( ang );
-		float last_coord_x = first_coord_x;
-		float last_coord_y = first_coord_y;
 		objectVertexes.push_back( pixels_to_coords_x( x0 ) );
 		objectVertexes.push_back( pixels_to_coords_y( y0 ) );
 		objectVertexes.push_back( 0.0 );
@@ -104,21 +102,11 @@ void GraphicSpring::initCircleAtLinks( int x0, int y0, int radius )
 			float coordY = 0 + 1.0 * fsin;
 
 
-
-//			objectVertexes.push_back( last_coord_x );
-//			objectVertexes.push_back( last_coord_y );
 			objectVertexes.push_back( coordX );
 			objectVertexes.push_back( coordY );
 
-			last_coord_x = coordX;
-			last_coord_y = coordY;
-
 			ang += da;
 		}
-//		objectVertexes.push_back( 0.0 );
-//		objectVertexes.push_back( 0.0 );
-//		objectVertexes.push_back( last_coord_x );
-//		objectVertexes.push_back( last_coord_y );
 		objectVertexes.push_back( first_coord_x );
 		objectVertexes.push_back( first_coord_y );
 	}

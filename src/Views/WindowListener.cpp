@@ -8,13 +8,12 @@
 #include "WindowListener.h"
 #include <Elementary.h>
 
-WindowListener::WindowListener() {
-	// TODO Auto-generated constructor stub
-
+WindowListener::WindowListener()
+{
 }
 
-WindowListener::~WindowListener() {
-	// TODO Auto-generated destructor stub
+WindowListener::~WindowListener()
+{
 }
 
 void WindowListener::onExitRequest(Window & win)
