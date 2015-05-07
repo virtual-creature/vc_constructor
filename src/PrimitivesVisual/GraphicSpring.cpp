@@ -330,6 +330,7 @@ void GraphicSpring::draw_line_2d()
 
 	scale_xyz( scaleMatrix, 1.0, 1.0, 1.0 );
 	scale_xyz( scaleMatrix, 0.025 / dimension, 0.025, 1.0 );
+
 	static int angle = 0;
 	angle += 10;
 //	rotate_xyz( rotateMatrix, 0, 0, 90 + m_springRotateAngle );
