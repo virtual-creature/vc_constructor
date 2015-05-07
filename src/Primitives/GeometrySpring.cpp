@@ -170,7 +170,7 @@ string GeometrySpring::toString()
 	return stream.str();
 }
 
-void GeometrySpring::fromString( string str )
+bool GeometrySpring::fromString( string str )
 {
 	GeometryObjectsTypes geometryObjectType = GEOMETRYOBJECT_DUMMY;
 	int Id = 0;
@@ -180,13 +180,16 @@ void GeometrySpring::fromString( string str )
 	sscanf( str.c_str(), "%d %d %d %d %d", (int*)&geometryObjectType, &Id, &linkFromId, &linkToId, &isClosestPathInt );
 	if( geometryObjectType != GEOMETRYOBJECT_SPRING )
 	{
-		assert( false );
+//		assert( false );
+		return false;
 	}
 	const GeometryLink *linkFrom = dynamic_cast<const GeometryLink *>( GeometryObjectsManager::getInstance().getObject( linkFromId ) );
 	const GeometryLink *linkTo = dynamic_cast<const GeometryLink *>( GeometryObjectsManager::getInstance().getObject( linkToId ) );
 	setLinkFrom( linkFrom );
 	setLinkTo( linkTo );
 	setIsClosedPath( isClosestPathInt == 1 );
+
+	return true;
 }
 
 IGeometryObject & GeometrySpring::operator = ( IGeometryObject & src )

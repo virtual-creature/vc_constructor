@@ -35,6 +35,7 @@ using namespace std;
 #include "DynamicObjectsContructor.h"
 #include "GraphicObjectsContrucor.h"
 #include "SetRigidSpringBetweenUnusedLinksFunctor.h"
+#include "FileOpen.h"
 
 void on_fixed_unused_muscules( void * userData )
 {
@@ -85,11 +86,13 @@ void on_save_objects( void * userData )
 	GeometryObjectsManager::getInstance().save( "./objects.txt" );
 }
 
-void on_open_objects( void * userData )
+void FileOpenSuccessCb( void * userData )
 {
-	GeometryObjectsManager::getInstance().open( "./objects.txt" );
-
 	DrawingContent * viewUpdater = (DrawingContent *)userData;
+
+	string filePath = FileOpen::getInstance().getFilePath();
+//	GeometryObjectsManager::getInstance().open( "./objects.txt" );
+	GeometryObjectsManager::getInstance().open( filePath );
 
 	vector<IGeometryObject *> geometryObjects;
 	vector<IGraphicObject *> graphicObjects;
@@ -97,6 +100,17 @@ void on_open_objects( void * userData )
 	GraphicObjectsContrucor::getInstance().convert( geometryObjects, graphicObjects );
 
 	viewUpdater->setGraphicObjects( graphicObjects );
+}
+
+void on_open_objects( void * userData )
+{
+	DrawingContent * viewUpdater = (DrawingContent *)userData;
+
+	FileOpen::getInstance().setParent( viewUpdater->getParent() );
+	FileOpen::getInstance().setCallback( FileOpenSuccessCb );
+	FileOpen::getInstance().setUserData( viewUpdater );
+
+	FileOpen::getInstance().Open();
 }
 
 void on_run_simulation( void * userData )

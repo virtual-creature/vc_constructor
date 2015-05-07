@@ -89,7 +89,7 @@ string GeometryPoint::toString()
 	return stream.str();
 }
 
-void GeometryPoint::fromString( string str )
+bool GeometryPoint::fromString( string str )
 {
 	GeometryObjectsTypes geometryObjectType = GEOMETRYOBJECT_DUMMY;
 	int Id = 0;
@@ -98,11 +98,14 @@ void GeometryPoint::fromString( string str )
 	sscanf( str.c_str(), "%d %d %d %d", (int*)&geometryObjectType, &Id, &x, &y );
 	if( geometryObjectType != GEOMETRYOBJECT_POINT )
 	{
-		assert( false );
+//		assert( false );
+		return false;
 	}
 	setId( Id );
 	setX( x );
 	setY( y );
+
+	return true;
 }
 
 IGeometryObject & GeometryPoint::operator = ( IGeometryObject & src )

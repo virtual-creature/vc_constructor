@@ -68,7 +68,7 @@ string GeometryLink::toString()
 	return stream.str();
 }
 
-void GeometryLink::fromString( string str )
+bool GeometryLink::fromString( string str )
 {
 	GeometryObjectsTypes geometryObjectType = GEOMETRYOBJECT_DUMMY;
 	int Id = 0;
@@ -77,13 +77,16 @@ void GeometryLink::fromString( string str )
 	sscanf( str.c_str(), "%d %d %d %d", (int*)&geometryObjectType, &Id, &pointFromId, &pointToId );
 	if( geometryObjectType != GEOMETRYOBJECT_LINK )
 	{
-		assert( false );
+//		assert( false );
+		return false;
 	}
 	setId( Id );
 	const GeometryPoint *pointFrom = dynamic_cast<const GeometryPoint *>( GeometryObjectsManager::getInstance().getObject( pointFromId ) );
 	const GeometryPoint *pointTo = dynamic_cast<const GeometryPoint *>( GeometryObjectsManager::getInstance().getObject( pointToId ) );
 	setPointFrom( pointFrom );
 	setPointTo( pointTo );
+
+	return true;
 }
 
 GeometryLink & GeometryLink::operator = ( const GeometryLink & src )

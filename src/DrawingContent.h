@@ -19,10 +19,11 @@ class DrawingContent
 {
 
 public:
-	DrawingContent( Evas_Object *mainWindowObject, Evas_Object *mainLayout );
+	DrawingContent( Evas_Object * parent, Evas_Object * mainLayout );
 	virtual ~DrawingContent();
 
 	Evas_Object * getDrawingCanvas();
+	Evas_Object * getParent();
 
 	void update();
 
@@ -65,7 +66,7 @@ private:
 	Evas_Object * m_MainLayout;
 	Evas_Object * m_DrawingLayout;
 
-	Evas_Object * m_MainWindowObject;
+	Evas_Object * m_Parent;
 
 	Evas_Object * m_DrawingCanvas;
 

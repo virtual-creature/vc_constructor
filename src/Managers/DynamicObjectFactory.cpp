@@ -76,7 +76,7 @@ void DynamicObjectFactory::initCanvasBorders()
 void DynamicObjectFactory::initSpace()
 {
 	// cpVect is a 2D vector and cpv() is a shortcut for initializing them.
-	m_Gravity = cpv( 0, 1000 );
+	m_Gravity = cpv( 0, 0 );
 	// Create an empty space.
 	m_Space = cpSpaceNew();
 	cpSpaceSetGravity( m_Space, m_Gravity );

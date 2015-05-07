@@ -25,7 +25,7 @@ using namespace std;
 
 static DrawingContent * lpThis = 0;
 
-DrawingContent::DrawingContent( Evas_Object *mainWindowObject, Evas_Object *mainLayout ) : m_MainLayout( mainLayout ), m_MainWindowObject( mainWindowObject ),
+DrawingContent::DrawingContent( Evas_Object * parent, Evas_Object *mainLayout ) : m_MainLayout( mainLayout ), m_Parent( parent ),
 		m_DynamicTimer( DynamicDrawTimer, this ), m_DrawDynamic( false )
 {
 	createDrawingLayout();
@@ -146,6 +146,11 @@ void DrawingContent::createDrawingCanvas()
 Evas_Object * DrawingContent::getDrawingCanvas()
 {
 	return m_DrawingCanvas;
+}
+
+Evas_Object * DrawingContent::getParent()
+{
+	return m_Parent;
 }
 
 void DrawingContent::update()

@@ -414,9 +414,15 @@ void GeometryObjectsManager::open( string filename )
 
 		IGeometryObject * geometryObject = GeometryObjectFactory::getInstance().createGeometryObject( type );
 		string command = str;
-		geometryObject->fromString( command );
-
-		addObject( geometryObject );
+		if( true == geometryObject->fromString( command ) )
+		{
+			addObject( geometryObject );
+		}
+		else
+		{
+			clearObjects();
+			break;
+		}
 	}
 }
 

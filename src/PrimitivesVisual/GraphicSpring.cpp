@@ -48,12 +48,10 @@ GraphicSpring::~GraphicSpring()
 void GraphicSpring::draw()
 {
 //	if( true == m_geometrySpring->getIsRigid() )
-	{
+//	{
 //        return;
-    }
-	size_t c = m_PerTriangletTranslateMat4.size();
+//  }
 	initCircleVertexes();
-	c = m_PerTriangletTranslateMat4.size();
 	draw_line_2d();
 }
 
@@ -201,7 +199,8 @@ void GraphicSpring::initCompleteCircleVertex()
 	int minAngle = getRange.getMinAngle();
 	int maxAngle = getRange.getMaxAngle();
 
-	cout << "minAngle=" << minAngle << "; maxAngle=" << maxAngle << endl << flush;
+//	cout << "minAngle=" << minAngle << "; maxAngle=" << maxAngle << endl << flush;
+	cout << "diffAngles=" << abs( maxAngle - minAngle ) << endl << flush;
 	float radian = ( (float)minAngle / 180.0 ) * M_PI;
 	const int segmentMinAngle = 20;
 	float segmentsCount = (float)( abs( maxAngle - minAngle ) ) / (float)segmentMinAngle;
@@ -320,7 +319,6 @@ void GraphicSpring::draw_line_2d()
 	GLfloat translateMatrix[16];
 	GLfloat scaleMatrix[16];
 	GLfloat rotateMatrix[16];
-//	GLfloat v_color[4] = { 0.9, 0.5, 1.0, 1.0 };
 
 	GLfloat perspective[16];
 	init_matrix( perspective );
@@ -328,12 +326,7 @@ void GraphicSpring::draw_line_2d()
 	init_matrix( scaleMatrix );
 	init_matrix( rotateMatrix );
 
-	scale_xyz( scaleMatrix, 1.0, 1.0, 1.0 );
 	scale_xyz( scaleMatrix, 0.025 / dimension, 0.025, 1.0 );
-
-	static int angle = 0;
-	angle += 10;
-//	rotate_xyz( rotateMatrix, 0, 0, 90 + m_springRotateAngle );
 
 	int from_x = ( m_geometrySpring->getLinkFrom()->getPointFrom()->getX() + m_geometrySpring->getLinkFrom()->getPointTo()->getX() ) / 2;
 	int from_y = ( m_geometrySpring->getLinkFrom()->getPointFrom()->getY() + m_geometrySpring->getLinkFrom()->getPointTo()->getY() ) / 2;
@@ -355,18 +348,6 @@ void GraphicSpring::draw_line_2d()
 
 	__evas_gl_glapi->glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	__evas_gl_glapi->glEnable( GL_BLEND );
-
-//	for( unsigned int index_i = 0 ; index_i < 150 ; index_i += 3 )
-//	{
-//		unsigned int * indices = new unsigned int[3];
-//		indices[0] = index_i;
-//		indices[1] = index_i + 1;
-//		indices[2] = index_i + 2;
-//
-//		__evas_gl_glapi->glDrawElements( GL_TRIANGLES, 3, GL_UNSIGNED_INT, indices );
-//
-//		delete[] indices;
-//	}
 
 	size_t objectCount = m_vertexBuffer.size();
 	for( size_t object_i = 0 ; object_i < objectCount ; object_i++ )
@@ -424,7 +405,7 @@ string GraphicSpring::getFragmentShader()
 \n		varying vec2 centerPos;
 \n		void main()
 \n		{
-\n			float length = distance( fragPos, centerPos );
+\n			float length = length( fragPos );
 \n			gl_FragColor = vec4( color.xyz, 1.0 - length );
 \n		}
 \n

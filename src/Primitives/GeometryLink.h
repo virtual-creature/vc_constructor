@@ -37,7 +37,7 @@ public:
 	GeometryObjectsConstructiongStates getConstructingState() const;
 	IGeometryObject * clone();
 	string toString();
-	void fromString( string str );
+	bool fromString( string str );
 	IGeometryObject & operator = ( IGeometryObject & src );
 	bool isValid();
 

@@ -23,7 +23,7 @@ public:
 	virtual int getId() const = 0;
 	virtual IGeometryObject * clone() = 0;
 	virtual string toString() = 0;
-	virtual void fromString( string str ) = 0;
+	virtual bool fromString( string str ) = 0;
     virtual bool isValid() = 0;
 
 	virtual IGeometryObject & operator = ( IGeometryObject & src ) = 0;

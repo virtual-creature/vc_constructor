@@ -52,9 +52,17 @@ string GeometryDummy::toString()
 	return stream.str();
 }
 
-void GeometryDummy::fromString( string str )
+bool GeometryDummy::fromString( string str )
 {
+	GeometryObjectsTypes geometryObjectType = GEOMETRYOBJECT_DUMMY;
+	sscanf( str.c_str(), "%d", (int*)&geometryObjectType );
+	if( geometryObjectType != GEOMETRYOBJECT_POINT )
+	{
+//		assert( false );
+		return false;
+	}
 
+	return true;
 }
 
 IGeometryObject & GeometryDummy::operator = ( IGeometryObject & src )
