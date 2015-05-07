@@ -65,13 +65,13 @@ IGeometryObject & GraphicLink::getGeometryObject()
 
 void GraphicLink::initLineVertexes()
 {
-	m_vertexBuffer.clear();
+	vector<GLfloat> objectVertexes;
 	{
 		int x = m_geometryLink.getPointFrom()->getX();
 		int y = m_geometryLink.getPointFrom()->getY();
 
-		m_vertexBuffer.push_back( pixels_to_coords_x( x ) );
-		m_vertexBuffer.push_back( pixels_to_coords_y( y ) );
+		objectVertexes.push_back( pixels_to_coords_x( x ) );
+		objectVertexes.push_back( pixels_to_coords_y( y ) );
 //		m_vertexBuffer.push_back( 0.0 );
 	}
 
@@ -79,10 +79,11 @@ void GraphicLink::initLineVertexes()
 		int x = m_geometryLink.getPointTo()->getX();
 		int y = m_geometryLink.getPointTo()->getY();
 
-		m_vertexBuffer.push_back( pixels_to_coords_x( x ) );
-		m_vertexBuffer.push_back( pixels_to_coords_y( y ) );
+		objectVertexes.push_back( pixels_to_coords_x( x ) );
+		objectVertexes.push_back( pixels_to_coords_y( y ) );
 //		m_vertexBuffer.push_back( 0.0 );
 	}
+	m_vertexBuffer.push_back( objectVertexes );
 }
 
 string GraphicLink::getVertexShader()
@@ -138,7 +139,7 @@ void GraphicLink::draw_line_2d()
 	GLfloat scaleMatrix[16];
 	GLfloat rotateMatrix[16];
 	GLfloat v_color[4] = { 0.5, 0.5, 1.0, 1.0 };
-	GLfloat v_sourcePoint[2] = { m_vertexBuffer[0], m_vertexBuffer[1] };
+	GLfloat v_sourcePoint[2] = { m_vertexBuffer[0][0], m_vertexBuffer[0][1] };
 
 	GLfloat perspective[16];
 	init_matrix( perspective );
@@ -150,13 +151,10 @@ void GraphicLink::draw_line_2d()
 
 	const int coordinates_in_point = 2;
 
-	size_t vertixesCount = m_vertexBuffer.size() / coordinates_in_point;
 
 	__evas_gl_glapi->glUseProgram( m_Program );
 
 	__evas_gl_glapi->glEnableVertexAttribArray( m_positionIdx );
-
-	__evas_gl_glapi->glVertexAttribPointer( m_positionIdx, coordinates_in_point, GL_FLOAT, GL_FALSE, coordinates_in_point * sizeof(GLfloat), &m_vertexBuffer[0] );
 
 	const int matrixCount = 1;
 
@@ -167,9 +165,19 @@ void GraphicLink::draw_line_2d()
 	__evas_gl_glapi->glUniform4f( m_color_idx, v_color[0], v_color[1], v_color[2], v_color[3] );
 	__evas_gl_glapi->glUniform2f( m_color_idx, v_sourcePoint[0], v_sourcePoint[1] );
 
-	__evas_gl_glapi->glDrawArrays( GL_LINES, 0, vertixesCount );
+	size_t objectCount = m_vertexBuffer.size();
+	for( size_t object_i = 0 ; object_i < objectCount ; object_i++ )
+	{
+		size_t vertixesCount = m_vertexBuffer[object_i].size() / coordinates_in_point;
+
+		__evas_gl_glapi->glVertexAttribPointer( m_positionIdx, coordinates_in_point, GL_FLOAT, GL_FALSE, coordinates_in_point * sizeof(GLfloat), &m_vertexBuffer[object_i][0] );
+
+		__evas_gl_glapi->glDrawArrays( GL_LINES, 0, vertixesCount );
+	}
 
 	__evas_gl_glapi->glDisableVertexAttribArray( m_positionIdx );
 
 	__evas_gl_glapi->glUseProgram( 0 );
+
+	m_vertexBuffer.clear();
 }

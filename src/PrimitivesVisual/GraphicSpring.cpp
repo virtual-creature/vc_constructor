@@ -28,7 +28,7 @@ GraphicSpring::GraphicSpring( IGeometryObject * geometryObject, Evas_Object * ca
 	m_Color[2] = ( (float)( rand() % 255 ) ) / 255.0f;
 
 	m_ColorUniformIdx = m_glApi->glGetUniformLocation( m_Program, "color" );
-	m_CenterIdx = m_glApi->glGetAttribLocation( m_Program, "centerPos" );
+
 }
 
 GraphicSpring::GraphicSpring( const GraphicSpring & src )
@@ -39,7 +39,6 @@ GraphicSpring::GraphicSpring( const GraphicSpring & src )
 	initShaders();
 
 	m_ColorUniformIdx = m_glApi->glGetUniformLocation( m_Program, "color" );
-	m_CenterIdx = m_glApi->glGetAttribLocation( m_Program, "centerPos" );
 }
 
 GraphicSpring::~GraphicSpring()
@@ -52,7 +51,9 @@ void GraphicSpring::draw()
 	{
 //        return;
     }
+	size_t c = m_PerTriangletTranslateMat4.size();
 	initCircleVertexes();
+	c = m_PerTriangletTranslateMat4.size();
 	draw_line_2d();
 }
 
@@ -61,50 +62,9 @@ IGeometryObject & GraphicSpring::getGeometryObject()
 	return *m_geometrySpring;
 }
 
-string GraphicSpring::getVertexShader()
-{
-	string shader = SHADER(
-
-		attribute vec2 vPosition;
-		uniform mat4 perspective;
-		uniform mat4 translate;
-		uniform mat4 scale;
-		varying vec2 fragPos;
-		attribute vec2 centerPos;
-		varying vec2 varCenter;
-		void main()
-		{
-			gl_Position = perspective * translate * scale * vec4( vPosition.xy, 0.0, 1.0 );
-			fragPos = vPosition.xy;
-			varCenter = centerPos;
-		}
-
-						);
-
-	return shader;
-}
-
-string GraphicSpring::getFragmentShader()
-{
-	string shader =	SHADER(
-\n
-\n		uniform vec3 color;
-\n		varying vec2 fragPos;
-\n		varying vec2 varCenter;
-\n		void main()
-\n		{
-\n			float vectorLen = distance( fragPos, varCenter );
-\n			gl_FragColor = vec4( color.xyz, 1.0 - vectorLen );
-\n		}
-\n
-						);
-
-	return shader;
-}
-
 void GraphicSpring::initLineVertexes()
 {
-	m_vertexBuffer.clear();
+	vector<GLfloat> objectVertexes;
 
 	int from_x = ( m_geometrySpring->getLinkFrom()->getPointFrom()->getX() + m_geometrySpring->getLinkFrom()->getPointTo()->getX() ) / 2;
 	int from_y = ( m_geometrySpring->getLinkFrom()->getPointFrom()->getY() + m_geometrySpring->getLinkFrom()->getPointTo()->getY() ) / 2;
@@ -112,51 +72,59 @@ void GraphicSpring::initLineVertexes()
 	int to_x = ( m_geometrySpring->getLinkTo()->getPointFrom()->getX() + m_geometrySpring->getLinkTo()->getPointTo()->getX() ) / 2;
 	int to_y = ( m_geometrySpring->getLinkTo()->getPointFrom()->getY() + m_geometrySpring->getLinkTo()->getPointTo()->getY() ) / 2;
 
-	m_vertexBuffer.push_back( pixels_to_coords_x( from_x ) );
-	m_vertexBuffer.push_back( pixels_to_coords_y( from_y ) );
+	objectVertexes.push_back( pixels_to_coords_x( from_x ) );
+	objectVertexes.push_back( pixels_to_coords_y( from_y ) );
 
-	m_vertexBuffer.push_back( pixels_to_coords_x( to_x ) );
-	m_vertexBuffer.push_back( pixels_to_coords_y( to_y ) );
+	objectVertexes.push_back( pixels_to_coords_x( to_x ) );
+	objectVertexes.push_back( pixels_to_coords_y( to_y ) );
+
+	m_vertexBuffer.push_back( objectVertexes );
 }
 
 void GraphicSpring::initCircleAtLinks( int x0, int y0, int radius )
 {
+	vector<GLfloat> objectVertexes;
 	const int vertexNumber = 49;
 
 	float ang = 0;
 	float da = (float) (M_PI / 180 * (360.0f / vertexNumber));
 
 	{//Circle Points
-		int first_coord_x = x0 + radius * cos( ang );
-		int first_coord_y = y0 + radius * sin( ang );
-		int last_coord_x = first_coord_x;
-		int last_coord_y = first_coord_y;
+		float first_coord_x = 0 + 1.0 * cos( ang );
+		float first_coord_y = 0 + 1.0 * sin( ang );
+		float last_coord_x = first_coord_x;
+		float last_coord_y = first_coord_y;
+		objectVertexes.push_back( pixels_to_coords_x( x0 ) );
+		objectVertexes.push_back( pixels_to_coords_y( y0 ) );
+		objectVertexes.push_back( 0.0 );
+		objectVertexes.push_back( 0.0 );
 		for(double v_i = 0; v_i < vertexNumber; v_i ++ )
 		{
 			float fsin = sin( ang );
 			float fcos = cos( ang );
-			int coordX = x0 + radius * fcos;
-			int coordY = y0 + radius * fsin;
+			float coordX = 0 + 1.0 * fcos;
+			float coordY = 0 + 1.0 * fsin;
 
-			m_vertexBuffer.push_back( pixels_to_coords_x( x0 ) );
-			m_vertexBuffer.push_back( pixels_to_coords_y( y0 ) );
-			m_vertexBuffer.push_back( pixels_to_coords_x( last_coord_x ) );
-			m_vertexBuffer.push_back( pixels_to_coords_y( last_coord_y ) );
-			m_vertexBuffer.push_back( pixels_to_coords_x( coordX ) );
-			m_vertexBuffer.push_back( pixels_to_coords_y( coordY ) );
+
+
+//			objectVertexes.push_back( last_coord_x );
+//			objectVertexes.push_back( last_coord_y );
+			objectVertexes.push_back( coordX );
+			objectVertexes.push_back( coordY );
 
 			last_coord_x = coordX;
 			last_coord_y = coordY;
 
 			ang += da;
 		}
-		m_vertexBuffer.push_back( pixels_to_coords_x( x0 ) );
-		m_vertexBuffer.push_back( pixels_to_coords_y( y0 ) );
-		m_vertexBuffer.push_back( pixels_to_coords_x( last_coord_x ) );
-		m_vertexBuffer.push_back( pixels_to_coords_y( last_coord_y ) );
-		m_vertexBuffer.push_back( pixels_to_coords_x( first_coord_x ) );
-		m_vertexBuffer.push_back( pixels_to_coords_y( first_coord_y ) );
+//		objectVertexes.push_back( 0.0 );
+//		objectVertexes.push_back( 0.0 );
+//		objectVertexes.push_back( last_coord_x );
+//		objectVertexes.push_back( last_coord_y );
+		objectVertexes.push_back( first_coord_x );
+		objectVertexes.push_back( first_coord_y );
 	}
+	m_vertexBuffer.push_back( objectVertexes );
 }
 
 void GraphicSpring::initPartialCircleVertex()
@@ -251,8 +219,6 @@ void GraphicSpring::initCompleteCircleVertex()
 
 void GraphicSpring::initCircleVertexes()
 {
-	m_vertexBuffer.clear();
-
 	const GeometrySpring * geometrySpring = (GeometrySpring *)&( getGeometryObject() );
 	GeometryLinkGetAbsoluteAnglePredicate getLinkFromAbsoluteAngle( geometrySpring->getLinkFrom() );
 	GeometryLinkGetAbsoluteAnglePredicate getLinkToAbsoluteAngle( geometrySpring->getLinkTo() );
@@ -349,6 +315,8 @@ void GraphicSpring::draw_line_2d()
 {
 	Evas_GL_API * __evas_gl_glapi = m_glApi;
 
+	float dimension = m_DrawCanvasWidth / (float)m_DrawCanvasHeight;
+
 	GLfloat translateMatrix[16];
 	GLfloat scaleMatrix[16];
 	GLfloat rotateMatrix[16];
@@ -361,34 +329,25 @@ void GraphicSpring::draw_line_2d()
 	init_matrix( rotateMatrix );
 
 	scale_xyz( scaleMatrix, 1.0, 1.0, 1.0 );
+	scale_xyz( scaleMatrix, 0.025 / dimension, 0.025, 1.0 );
 	static int angle = 0;
 	angle += 10;
 //	rotate_xyz( rotateMatrix, 0, 0, 90 + m_springRotateAngle );
 
-//	int from_x = ( m_geometrySpring.getLinkFrom().getPointFrom().getX() + m_geometrySpring.getLinkFrom().getPointTo().getX() ) / 2;
-//	int from_y = ( m_geometrySpring.getLinkFrom().getPointFrom().getY() + m_geometrySpring.getLinkFrom().getPointTo().getY() ) / 2;
+	int from_x = ( m_geometrySpring->getLinkFrom()->getPointFrom()->getX() + m_geometrySpring->getLinkFrom()->getPointTo()->getX() ) / 2;
+	int from_y = ( m_geometrySpring->getLinkFrom()->getPointFrom()->getY() + m_geometrySpring->getLinkFrom()->getPointTo()->getY() ) / 2;
 
-//	translate_xyz( translateMatrix, pixels_to_coords_x( from_x ), pixels_to_coords_y( from_y ), 0.0f );
+	translate_xyz( translateMatrix, pixels_to_coords_x( from_x ), pixels_to_coords_y( from_y ), 0.0f );
 
 	const int coordinates_in_point = 2;
-
-	size_t vertixesCount = m_vertexBuffer.size() / coordinates_in_point;
 
 	__evas_gl_glapi->glUseProgram( m_Program );
 
 	__evas_gl_glapi->glEnableVertexAttribArray( m_positionIdx );
 
-	__evas_gl_glapi->glVertexAttribPointer( m_positionIdx, coordinates_in_point, GL_FLOAT, GL_FALSE, coordinates_in_point * sizeof(GLfloat), &m_vertexBuffer[0] );
-
-	__evas_gl_glapi->glEnableVertexAttribArray( m_CenterIdx );
-
-	__evas_gl_glapi->glVertexAttribPointer( m_CenterIdx, coordinates_in_point, GL_FLOAT, GL_FALSE, coordinates_in_point * 3 * sizeof(GLfloat), &m_vertexBuffer[4] );
-
-
 	const int matrixCount = 1;
 
 	__evas_gl_glapi->glUniformMatrix4fv( m_perspective_idx, matrixCount, GL_FALSE, perspective );
-	__evas_gl_glapi->glUniformMatrix4fv( m_translate_idx, matrixCount, GL_FALSE, translateMatrix );
 	__evas_gl_glapi->glUniformMatrix4fv( m_scale_idx, matrixCount, GL_FALSE, scaleMatrix );
 	__evas_gl_glapi->glUniformMatrix4fv( m_rotate_idx, matrixCount, GL_FALSE, rotateMatrix );
 	__evas_gl_glapi->glUniform3f( m_ColorUniformIdx, m_Color[0], m_Color[1], m_Color[2] );
@@ -407,14 +366,70 @@ void GraphicSpring::draw_line_2d()
 //
 //		delete[] indices;
 //	}
-	__evas_gl_glapi->glDrawArrays( GL_TRIANGLES, 0, vertixesCount );
 
+	size_t objectCount = m_vertexBuffer.size();
+	for( size_t object_i = 0 ; object_i < objectCount ; object_i++ )
+	{
+		vector<GLfloat> & objectVertexes = m_vertexBuffer[object_i];
+		size_t vertixesCount = objectVertexes.size() / coordinates_in_point;
+
+		init_matrix( translateMatrix );
+		GLfloat x0 = objectVertexes[0];
+		GLfloat y0 = objectVertexes[1];
+		translate_xyz( translateMatrix, x0, y0, 0.0f );
+		__evas_gl_glapi->glUniformMatrix4fv( m_translate_idx, matrixCount, GL_FALSE, translateMatrix );
+
+		__evas_gl_glapi->glVertexAttribPointer( m_positionIdx, coordinates_in_point, GL_FLOAT, GL_FALSE, coordinates_in_point * sizeof(GLfloat), &objectVertexes[2] );
+
+		__evas_gl_glapi->glDrawArrays( GL_TRIANGLE_FAN, 0, vertixesCount );
+	}
 	__evas_gl_glapi->glDisable( GL_BLEND );
 
 	__evas_gl_glapi->glDisableVertexAttribArray( m_positionIdx );
-	__evas_gl_glapi->glDisableVertexAttribArray( m_CenterIdx );
+
+	m_vertexBuffer.clear();
 
 	__evas_gl_glapi->glUseProgram( 0 );
+}
+
+string GraphicSpring::getVertexShader()
+{
+	string shader = SHADER(
+\n
+\n		attribute vec2 vPosition;
+\n		uniform mat4 perspective;
+\n		uniform mat4 translate;
+\n		uniform mat4 scale;
+\n		varying vec2 fragPos;
+\n		varying vec2 centerPos;
+\n		void main()
+\n		{
+\n			gl_Position = perspective * translate * scale * vec4( vPosition.xy, 0.0, 1.0 );
+\n			fragPos = vPosition.xy;
+\n			centerPos = vec2( translate[0][3], translate[1][3] );
+\n		}
+\n
+						);
+
+	return shader;
+}
+
+string GraphicSpring::getFragmentShader()
+{
+	string shader =	SHADER(
+\n
+\n		uniform vec3 color;
+\n		varying vec2 fragPos;
+\n		varying vec2 centerPos;
+\n		void main()
+\n		{
+\n			float length = distance( fragPos, centerPos );
+\n			gl_FragColor = vec4( color.xyz, 1.0 - length );
+\n		}
+\n
+						);
+
+	return shader;
 }
 
 

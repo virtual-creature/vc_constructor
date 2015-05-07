@@ -91,11 +91,12 @@ void GraphicPoint::initQuadVertex()
 //			-0.05f,  0.05f, 0.0f
 //	};
 
-	m_vertexBuffer.assign( vVertices, vVertices + sizeof( vVertices )/ sizeof( vVertices[0]) );
+//	m_vertexBuffer.assign( vVertices, vVertices + sizeof( vVertices )/ sizeof( vVertices[0]) );
 }
 
 void GraphicPoint::initCircleVertex()
 {
+	vector<GLfloat> objectVertexes;
 	int vertexNumber = 50;
 
 	float ang = 0;
@@ -108,13 +109,14 @@ void GraphicPoint::initCircleVertex()
 		{
 			float fsin = sin( ang );
 			float fcos = cos( ang );
-			m_vertexBuffer.push_back( fcos );
-			m_vertexBuffer.push_back( fsin );
+			objectVertexes.push_back( fcos );
+			objectVertexes.push_back( fsin );
 	//		m_vertexBuffer.push_back( 0.0 );
 
 			ang += da;
 		}
 	}
+	m_vertexBuffer.push_back( objectVertexes );
 }
 
 string GraphicPoint::getVertexShader()
@@ -224,8 +226,6 @@ void GraphicPoint::draw_circle_2d()
 //	rotate_xyz( rotateMatrix, 0.0, 0.0, 0.0 );
 	GLfloat v_color[4] = { 0.5, 0.5, 1.0, 1.0 };
 
-	size_t vertixesCount = m_vertexBuffer.size() / coordinates_in_point;
-
 	__evas_gl_glapi->glUseProgram( m_Program );
 
 //	__evas_gl_glapi->glVertexAttribPointer( 0, coordinates_in_point, GL_FLOAT, GL_FALSE, 0, 0 );
@@ -236,8 +236,6 @@ void GraphicPoint::draw_circle_2d()
 
 	__evas_gl_glapi->glEnableVertexAttribArray( m_positionIdx );
 
-	__evas_gl_glapi->glVertexAttribPointer( m_positionIdx, coordinates_in_point, GL_FLOAT, GL_FALSE, coordinates_in_point * sizeof(GLfloat), &m_vertexBuffer[0] );
-
 	__evas_gl_glapi->glUniformMatrix4fv( m_perspective_idx, 1, GL_FALSE, perspective );
 	__evas_gl_glapi->glUniformMatrix4fv( m_translate_idx, 1, GL_FALSE, translateMatrix );
 	__evas_gl_glapi->glUniformMatrix4fv( m_scale_idx, 1, GL_FALSE, scaleMatrix );
@@ -247,13 +245,23 @@ void GraphicPoint::draw_circle_2d()
 	__evas_gl_glapi->glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 	__evas_gl_glapi->glEnable( GL_BLEND );
 
-	__evas_gl_glapi->glDrawArrays( GL_TRIANGLE_FAN, 0, vertixesCount );
+	size_t objectCount = m_vertexBuffer.size();
+	for( size_t object_i = 0 ; object_i < objectCount ; object_i++ )
+	{
+		size_t vertixesCount = m_vertexBuffer[object_i].size() / coordinates_in_point;
+
+		__evas_gl_glapi->glVertexAttribPointer( m_positionIdx, coordinates_in_point, GL_FLOAT, GL_FALSE, coordinates_in_point * sizeof(GLfloat), &m_vertexBuffer[object_i][0] );
+
+		__evas_gl_glapi->glDrawArrays( GL_TRIANGLE_FAN, 0, vertixesCount );
+	}
 
 	__evas_gl_glapi->glDisable( GL_BLEND );
 
 	__evas_gl_glapi->glDisableVertexAttribArray( m_positionIdx );
 
 	__evas_gl_glapi->glUseProgram( 0 );
+
+//	m_vertexBuffer.clear();
 }
 
 void GraphicPoint::draw()

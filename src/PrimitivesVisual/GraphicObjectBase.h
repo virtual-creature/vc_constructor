@@ -9,6 +9,7 @@
 #define GRAPHICOBJECTBASE_H_
 
 #include "IGraphicObject.h"
+#include "MatrixWrapper.h"
 #include <Evas_GL.h>
 #include <vector>
 using namespace std;
@@ -42,9 +43,13 @@ protected:
 	virtual string getVertexShader();
 	virtual string getFragmentShader();
 
+	void addTranslateMatrix( float gl_x, float gl_y );
+	void addTranslateMatrix( int pixel_x, int pixels_y );
+	void clearTranslateMatrixes();
+
 protected:
 
-	vector<GLfloat> m_vertexBuffer;
+	vector<vector<GLfloat> > m_vertexBuffer;
 	GLuint       	m_vertexesBufferObject;
 	GLuint       	m_Program;
 	GLuint       	m_vertexShader;
@@ -55,6 +60,7 @@ protected:
 	Evas_GL_API   * m_glApi;
 
 	float			m_projectionMatrix[16];
+	vector<float> m_PerTriangletTranslateMat4;
 
 	int 			m_DrawCanvasHeight;
 	int 			m_DrawCanvasWidth;

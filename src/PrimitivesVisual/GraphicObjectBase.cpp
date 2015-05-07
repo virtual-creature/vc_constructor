@@ -398,3 +398,38 @@ float GraphicObjectBase::pixels_to_coords_y( unsigned int y )
 	return translate_y;
 }
 
+void GraphicObjectBase::addTranslateMatrix( float gl_x, float gl_y )
+{
+	vector<float> mat( 16 );
+	init_matrix( &mat[0] );
+	translate_xyz( &mat[0], gl_x, gl_y, 0.0 );
+	m_PerTriangletTranslateMat4.insert( m_PerTriangletTranslateMat4.end(), mat.begin(), mat.end() );
+
+	size_t c = m_PerTriangletTranslateMat4.size();
+
+	int a = 0;
+	a++;
+}
+
+void GraphicObjectBase::addTranslateMatrix( int pixel_x, int pixels_y )
+{
+	vector<float> mat( 16 );
+	init_matrix( &mat[0] );
+	addTranslateMatrix( pixels_to_coords_x( pixel_x ), pixels_to_coords_y( pixels_y ) );
+}
+
+void GraphicObjectBase::clearTranslateMatrixes()
+{
+	m_PerTriangletTranslateMat4.clear();
+}
+
+
+
+
+
+
+
+
+
+
+
