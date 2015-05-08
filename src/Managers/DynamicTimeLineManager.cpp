@@ -5,7 +5,7 @@
  *      Author: vostanin
  */
 
-#include <DynamicTimeLineManager.h>
+#include "DynamicTimeLineManager.h"
 
 DynamicTimeLineManager::DynamicTimeLineManager() : m_Space( 0 )
 {

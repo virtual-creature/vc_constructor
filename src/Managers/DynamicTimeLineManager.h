@@ -12,9 +12,11 @@
 
 class DynamicTimeLineManager
 {
-public:
+
 	DynamicTimeLineManager();
 	virtual ~DynamicTimeLineManager();
+
+public:
 
 	void setSpace( cpSpace * space );
 	void stepSpace();

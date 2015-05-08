@@ -9,6 +9,7 @@
 #include "DynamicObjectFactory.h"
 #include "DynamicLinksPointFindPredicate.h"
 #include "DynamicSpringsLinkFindPredicate.h"
+#include "DynamicSpaceHolder.h"
 #include <algorithm>
 using namespace std;
 
@@ -36,8 +37,8 @@ void DynamicObjectsContructor::convert( vector<IGeometryObject *> & geometryObje
 
 void DynamicObjectsContructor::convertSmart( vector<IGeometryObject *> & geometryObjects, vector<IDynamicObject *> & dynamicObjects )
 {
-	DynamicObjectFactory::getInstance().setCanvasWidth( m_CanvasWidth );
-	DynamicObjectFactory::getInstance().setCanvasHeight( m_CanvasHeight );
+	DynamicSpaceHolder::getInstance().setCanvasWidth( m_CanvasWidth );
+	DynamicSpaceHolder::getInstance().setCanvasHeight( m_CanvasHeight );
 
 	vector<IGeometryObject *>::iterator geometryBegin = geometryObjects.begin();
 	vector<IGeometryObject *>::iterator geometryEnd = geometryObjects.end();

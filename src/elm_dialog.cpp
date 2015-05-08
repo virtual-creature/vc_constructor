@@ -36,6 +36,8 @@ using namespace std;
 #include "GraphicObjectsContrucor.h"
 #include "SetRigidSpringBetweenUnusedLinksFunctor.h"
 #include "FileOpen.h"
+#include "DynamicObjectStabilizator.h"
+#include "DynamicSpaceHolder.h"
 
 void on_fixed_unused_muscules( void * userData )
 {
@@ -123,14 +125,21 @@ void on_run_simulation( void * userData )
 
 	GeometryObjectsManager::getInstance().getObjects( geometryObjects );
 
-	DynamicObjectFactory::getInstance().setCanvasWidth( viewUpdater->getCanvasWidth() );
-	DynamicObjectFactory::getInstance().setCanvasHeight( viewUpdater->getCanvasHeight() );
-	DynamicObjectFactory::getInstance().init();
+	DynamicSpaceHolder::getInstance().setCanvasWidth( viewUpdater->getCanvasWidth() );
+	DynamicSpaceHolder::getInstance().setCanvasHeight( viewUpdater->getCanvasHeight() );
+	DynamicSpaceHolder::getInstance().init();
 
 	DynamicObjectsContructor::getInstance().setCanvasWidth( viewUpdater->getCanvasWidth() );
 	DynamicObjectsContructor::getInstance().setCanvasHeight( viewUpdater->getCanvasHeight() );
 
 	DynamicObjectsContructor::getInstance().convertSmart( geometryObjects, dynamicObjects );
+
+//////Make stabiliation
+
+	DynamicObjectStabilizator stabilizator( DynamicSpaceHolder::getInstance().getSpace(), dynamicObjects );
+	stabilizator.stabilize();
+
+///////////////////////
 
 	DynamicObjectsManager::getInstance().setObjects( dynamicObjects );
 

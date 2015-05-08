@@ -8,6 +8,7 @@
 #include "GeometryObjectsManager.h"
 #include "GeometryObjectFactory.h"
 #include "DynamicObjectFactory.h"
+#include "DynamicSpaceHolder.h"
 #include "GeometrySpring.h"
 #include <iostream>
 
@@ -41,7 +42,7 @@ void SimulationOperationTracking::trackerBegin( int x, int y )
 {
 	cpVect mousePoint = cpv( x, y );
 
-	cpSpace * space = DynamicObjectFactory::getInstance().getInstance().getSpace();
+	cpSpace * space = DynamicSpaceHolder::getInstance().getInstance().getSpace();
 	m_Space = space;
 
 	cpShape * shape = cpSpacePointQueryNearest( m_Space, mousePoint, 100.0, GRAB_FILTER, 0 );

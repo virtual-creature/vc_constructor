@@ -13,7 +13,6 @@
 #include "IGraphicObject.h"
 #include "GeometryObjectsTypes.h"
 #include "GeometryPointDynamic.h"
-#include <chipmunk/chipmunk.h>
 
 class DynamicObjectFactory
 {
@@ -24,34 +23,8 @@ public:
 	IDynamicObject * createDynamicObject( IGeometryObject * geometryObject );
 	IGraphicObject * createGraphicObject( IDynamicObject * geometryObject, Evas_Object * canvas );
 
-	void setCanvasWidth( unsigned int width );
-	void setCanvasHeight( unsigned int height );
-	unsigned int getCanvasWidth() const;
-	unsigned int getCanvasHeight() const;
-
-	void init();
-
-	cpSpace * getSpace() const;
-
 	static DynamicObjectFactory & getInstance();
 
-private:
-
-	void initSpace();
-	void initCanvasBorders();
-
-	cpSpace * m_Space;
-	cpVect m_Gravity;
-
-	cpShape * m_LeftBorder;
-	cpShape * m_RightBorder;
-	cpShape * m_TopBorder;
-	cpShape * m_BottomBorder;
-
-	unsigned int m_CanvasWidth;
-	unsigned int m_CanvasHeight;
-
-	bool m_Inited;
 };
 
 #endif /* DYNAMICOBJECTFACTORY_H_ */
